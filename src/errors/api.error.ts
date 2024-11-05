@@ -1,8 +1,8 @@
 class ApiError extends Error { 
     code: number
-    path: string
+    path?: string
     data?: object
-    constructor(message: string, code: number, path: string, data? : object){
+    constructor(message: string, code: number, path?: string, data? : object){
         super(message)
         this.message = message
         this.code = code
