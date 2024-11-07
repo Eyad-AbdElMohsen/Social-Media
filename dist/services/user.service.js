@@ -12,13 +12,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.correctPassword = exports.postSignup = exports.getUser = void 0;
+exports.login = exports.correctPassword = exports.postSignup = exports.getUser = exports.getAllUsers = void 0;
 const user_model_1 = require("../models/user.model");
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const getUser = (email) => {
-    const user = user_model_1.User.findOne({ email });
+const generateJWT_1 = require("../utils/generateJWT");
+const getAllUsers = (limit, skip) => __awaiter(void 0, void 0, void 0, function* () {
+    const users = yield user_model_1.User.find({}, { "__v": false, "confirmPassword": false }).limit(limit).skip(skip);
+    return users;
+});
+exports.getAllUsers = getAllUsers;
+const getUser = (email) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findOne({ email });
     return user;
-};
+});
 exports.getUser = getUser;
 const postSignup = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield bcrypt_1.default.hash(data.password, 10);
@@ -31,3 +37,9 @@ const correctPassword = (password, user) => __awaiter(void 0, void 0, void 0, fu
     return yield bcrypt_1.default.compare(password, user.password);
 });
 exports.correctPassword = correctPassword;
+const login = (user) => __awaiter(void 0, void 0, void 0, function* () {
+    const token = yield (0, generateJWT_1.generateJWT)({ email: user.email, id: user._id, role: user.role });
+    user.token = token;
+    return token;
+});
+exports.login = login;

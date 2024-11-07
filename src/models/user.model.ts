@@ -24,7 +24,9 @@ export interface IUser extends Document {
     email: string,
     password: string, 
     confirmPassword: string,
-    role: [Role.ADMIN, Role.USER]
+    role: [Role.ADMIN, Role.USER],
+    _id: ObjectId | string,
+    token?: string,
 }
 
 export interface CreateUserData { 
@@ -32,7 +34,9 @@ export interface CreateUserData {
     email: string,
     password: string, 
     confirmPassword: string,
-    role: [Role.ADMIN, Role.USER]
+    role: [Role.ADMIN, Role.USER],
+    _id: ObjectId | string,
+    token?: string,
 }
 
 export const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);

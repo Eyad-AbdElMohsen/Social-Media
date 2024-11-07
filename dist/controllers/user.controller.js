@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postLogin = exports.postSignUp = void 0;
+exports.getAllUsers = exports.postLogin = exports.postSignUp = void 0;
 const api_error_1 = __importDefault(require("../errors/api.error"));
 const asyncWrapper_middleware_1 = __importDefault(require("../middlewares/asyncWrapper.middleware"));
 const userServices = __importStar(require("../services/user.service"));
@@ -52,16 +52,31 @@ exports.postSignUp = (0, asyncWrapper_middleware_1.default)((req, res) => __awai
     });
 }));
 exports.postLogin = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield userServices.getUser(req.body.email);
+    let user = yield userServices.getUser(req.body.email);
     if (!user) {
-        throw new api_error_1.default('This email is already exists', 409, req.path, { data: null });
+        throw new api_error_1.default('This email is not in database', 409, req.path, { data: null });
     }
     const correctPass = yield userServices.correctPassword(req.body.password, user);
     if (!correctPass) {
         throw new api_error_1.default("Password isn't correct", 400, req.path);
     }
+    const token = yield userServices.login(user);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
-        data: { user }
+        data: {
+            email: user.email,
+            Name: user.name,
+            role: user.role,
+            token: token
+        }
+    });
+}));
+exports.getAllUsers = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const limit = Number(req.query.limit);
+    const skip = Number(req.query.skip);
+    const users = yield userServices.getAllUsers(limit, skip);
+    res.status(200).json({
+        status: httpStatusText_1.SUCCESS,
+        data: { users }
     });
 }));

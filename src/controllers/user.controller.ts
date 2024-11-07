@@ -19,18 +19,34 @@ export const postSignUp = asyncWrapper( async(req: Request, res: Response) => {
 })
 
 export const postLogin = asyncWrapper( async(req: Request, res: Response) => {
-    const user = await userServices.getUser(req.body.email)
+    let user = await userServices.getUser(req.body.email)
     if(!user){
-        throw new ApiError('This email is already exists', 409, req.path, {data: null})
+        throw new ApiError('This email is not in database', 409, req.path, {data: null})
     }
     const correctPass: boolean = await userServices.correctPassword(req.body.password, user)
     if(!correctPass){
         throw new ApiError("Password isn't correct" ,  400, req.path)
     }
+    const token = await userServices.login(user)
     res.status(200).json({
         status: SUCCESS,
-        data: {user}
+        data: {
+            email: user.email,
+            Name: user.name,
+            role: user.role,
+            token: token
+        }
     })
 })
 
+
+export const getAllUsers = asyncWrapper(async(req: Request, res: Response) => {
+    const limit: number = Number(req.query.limit);
+    const skip: number = Number(req.query.skip);
+    const users = await userServices.getAllUsers(limit, skip)
+        res.status(200).json({
+        status: SUCCESS,
+        data: {users}
+    })
+})
 
