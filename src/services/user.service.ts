@@ -4,7 +4,7 @@ import { generateJWT } from "../utils/generateJWT"
 
 
 export const getAllUsers = async(limit: number, skip: number) => {
-    const users = await User.find({}, {"__v": false, "confirmPassword": false}).limit(limit).skip(skip)
+    const users = await User.find({}, {"__v": false, "password": false, "confirmPassword": false}).limit(limit).skip(skip)
     return users
 }
 

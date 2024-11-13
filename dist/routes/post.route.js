@@ -22,28 +22,21 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const user_validator_1 = require("../validators/user.validator");
-const validation_middleware_1 = __importDefault(require("../middlewares/validation.middleware"));
-const userController = __importStar(require("../controllers/user.controller"));
+const verifyToken_1 = require("../middlewares/verifyToken");
+const postController = __importStar(require("../controllers/post.controller"));
+const multer_1 = require("../utils/multer");
 const allowedTo_1 = require("../middlewares/allowedTo");
 const userRole_1 = require("../utils/userRole");
 const pagination_middleware_1 = require("../middlewares/pagination.middleware");
-const verifyToken_1 = require("../middlewares/verifyToken");
-const userRouter = (0, express_1.Router)();
-userRouter.route('/signup')
-    .post(user_validator_1.signUpValidation, validation_middleware_1.default, userController.postSignUp);
-userRouter.route('/login')
-    .post(user_validator_1.loginValidation, validation_middleware_1.default, userController.postLogin);
-//getting all users for admin 
-userRouter.route('/users')
-    .get(verifyToken_1.verifyToken, (0, allowedTo_1.allowedTo)([userRole_1.Role.ADMIN]), pagination_middleware_1.pagination, userController.getAllUsers);
-userRouter.route('/users/me/posts')
-    .get(verifyToken_1.verifyToken, pagination_middleware_1.pagination, userController.getMyPosts);
-userRouter.route('/users/:userId/posts')
-    .get(verifyToken_1.verifyToken, pagination_middleware_1.pagination, userController.getUserPosts);
-exports.default = userRouter;
+const isPostOwner_1 = require("../middlewares/isPostOwner");
+const postRouter = (0, express_1.Router)();
+postRouter.route('/posts/:postId')
+    .get(verifyToken_1.verifyToken, postController.getPost)
+    .patch(verifyToken_1.verifyToken, isPostOwner_1.isPostOwner, multer_1.upload.single('image'), postController.editPost)
+    .delete(verifyToken_1.verifyToken, isPostOwner_1.isPostOwner, postController.deletePost);
+postRouter.route('/posts')
+    .get(verifyToken_1.verifyToken, (0, allowedTo_1.allowedTo)([userRole_1.Role.ADMIN]), pagination_middleware_1.pagination, postController.getAllPosts)
+    .post(verifyToken_1.verifyToken, multer_1.upload.single('image'), postController.addPost);
+exports.default = postRouter;

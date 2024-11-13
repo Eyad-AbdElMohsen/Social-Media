@@ -35,11 +35,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllUsers = exports.postLogin = exports.postSignUp = void 0;
+exports.getMyPosts = exports.getUserPosts = exports.getAllUsers = exports.postLogin = exports.postSignUp = void 0;
 const api_error_1 = __importDefault(require("../errors/api.error"));
 const asyncWrapper_middleware_1 = __importDefault(require("../middlewares/asyncWrapper.middleware"));
 const userServices = __importStar(require("../services/user.service"));
 const httpStatusText_1 = require("../utils/httpStatusText");
+const postServices = __importStar(require("../services/post.service"));
+const mongoose_1 = require("mongoose");
 exports.postSignUp = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield userServices.getUser(req.body.email);
     if (user) {
@@ -79,4 +81,27 @@ exports.getAllUsers = (0, asyncWrapper_middleware_1.default)((req, res) => __awa
         status: httpStatusText_1.SUCCESS,
         data: { users }
     });
+}));
+const ObjectId = mongoose_1.Types.ObjectId;
+exports.getUserPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const limit = Number(req.query.limit);
+    const skip = Number(req.query.skip);
+    if (req.currentUser) {
+        const posts = yield postServices.getUserPosts(limit, skip, new ObjectId(req.params.userId));
+        res.status(200).json({
+            status: httpStatusText_1.SUCCESS,
+            data: { posts }
+        });
+    }
+}));
+exports.getMyPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const limit = Number(req.query.limit);
+    const skip = Number(req.query.skip);
+    if (req.currentUser) {
+        const posts = yield postServices.getUserPosts(limit, skip, req.currentUser.id);
+        res.status(200).json({
+            status: httpStatusText_1.SUCCESS,
+            data: { posts }
+        });
+    }
 }));

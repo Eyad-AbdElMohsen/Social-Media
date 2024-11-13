@@ -1,4 +1,4 @@
-import { JwtPayload } from "jsonwebtoken"
+import { JwtPayload} from '../models/user.model'
 import jwt from 'jsonwebtoken'
 
 

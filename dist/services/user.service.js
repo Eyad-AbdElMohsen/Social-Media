@@ -17,7 +17,7 @@ const user_model_1 = require("../models/user.model");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const generateJWT_1 = require("../utils/generateJWT");
 const getAllUsers = (limit, skip) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield user_model_1.User.find({}, { "__v": false, "confirmPassword": false }).limit(limit).skip(skip);
+    const users = yield user_model_1.User.find({}, { "__v": false, "password": false, "confirmPassword": false }).limit(limit).skip(skip);
     return users;
 });
 exports.getAllUsers = getAllUsers;

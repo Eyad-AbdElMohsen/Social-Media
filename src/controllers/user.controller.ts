@@ -1,9 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import ApiError from "../errors/api.error";
 import asyncWrapper from "../middlewares/asyncWrapper.middleware";
 import * as userServices from '../services/user.service'
 import { SUCCESS } from "../utils/httpStatusText";
-
+import { CustomRequest } from "../middlewares/verifyToken";
+import * as postServices from '../services/post.service'
+import { Types } from "mongoose";
 
 
 export const postSignUp = asyncWrapper( async(req: Request, res: Response) => {
@@ -44,9 +46,34 @@ export const getAllUsers = asyncWrapper(async(req: Request, res: Response) => {
     const limit: number = Number(req.query.limit);
     const skip: number = Number(req.query.skip);
     const users = await userServices.getAllUsers(limit, skip)
-        res.status(200).json({
+    res.status(200).json({
         status: SUCCESS,
         data: {users}
     })
 })
 
+const ObjectId = Types.ObjectId
+
+export const getUserPosts = asyncWrapper (async(req: CustomRequest, res: Response) => {
+    const limit: number = Number(req.query.limit);
+    const skip: number = Number(req.query.skip);
+    if(req.currentUser){
+        const posts = await postServices.getUserPosts(limit, skip, new ObjectId(req.params.userId))
+        res.status(200).json({
+            status: SUCCESS,
+            data: {posts}
+        })
+    }
+})
+
+export const getMyPosts = asyncWrapper (async(req: CustomRequest, res:Response) => {
+    const limit: number = Number(req.query.limit);
+    const skip: number = Number(req.query.skip);
+    if(req.currentUser){
+        const posts = await postServices.getUserPosts(limit, skip, req.currentUser.id)
+        res.status(200).json({
+            status: SUCCESS,
+            data: {posts}
+        })
+    }
+})

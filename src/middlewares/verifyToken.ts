@@ -2,8 +2,9 @@ import {    Request, Response, NextFunction } from "express";
 import asyncWrapper from "./asyncWrapper.middleware";
 import ApiError from "../errors/api.error";
 import dotenv from 'dotenv'
-import jwt, { JwtPayload } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { secretKey } from "../utils/generateJWT";
+import { JwtPayload} from '../models/user.model'
 
 dotenv.config()
 
@@ -22,6 +23,5 @@ export const verifyToken = asyncWrapper(async(req: CustomRequest, res: Response,
     }
     const user = jwt.verify(token, secretKey) as JwtPayload
     req.currentUser = user
-    console.log(user)
     next()
 })

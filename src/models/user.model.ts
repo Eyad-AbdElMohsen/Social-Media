@@ -24,8 +24,8 @@ export interface IUser extends Document {
     email: string,
     password: string, 
     confirmPassword: string,
-    role: [Role.ADMIN, Role.USER],
-    _id: ObjectId | string,
+    role: Role,
+    _id: ObjectId
     token?: string,
 }
 
@@ -35,8 +35,14 @@ export interface CreateUserData {
     password: string, 
     confirmPassword: string,
     role: [Role.ADMIN, Role.USER],
-    _id: ObjectId | string,
+    _id: ObjectId
     token?: string,
 }
+export interface JwtPayload {
+    email: string;
+    role: Role,
+    id: ObjectId
+}
+
 
 export const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);

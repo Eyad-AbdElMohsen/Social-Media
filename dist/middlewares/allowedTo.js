@@ -8,7 +8,6 @@ const api_error_1 = __importDefault(require("../errors/api.error"));
 const allowedTo = (roles) => {
     return (req, res, next) => {
         if (req.currentUser) {
-            console.log(req.currentUser.role);
             if (roles.includes(req.currentUser.role)) {
                 next();
             }

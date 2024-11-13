@@ -30,6 +30,5 @@ exports.verifyToken = (0, asyncWrapper_middleware_1.default)((req, res, next) =>
     }
     const user = jsonwebtoken_1.default.verify(token, generateJWT_1.secretKey);
     req.currentUser = user;
-    console.log(user);
     next();
 }));
