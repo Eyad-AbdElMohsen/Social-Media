@@ -4,9 +4,6 @@ import * as postServices from '../services/post.service'
 import { SUCCESS } from "../utils/httpStatusText";
 import { CustomRequest } from "../middlewares/verifyToken";
 import ApiError from "../errors/api.error";
-import { Types } from "mongoose";
-
-const ObjectId = Types.ObjectId
 
 export const addPost = asyncWrapper( async(req: CustomRequest, res: Response, next: NextFunction) => {
     if(req.currentUser){

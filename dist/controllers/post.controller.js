@@ -40,8 +40,6 @@ const asyncWrapper_middleware_1 = __importDefault(require("../middlewares/asyncW
 const postServices = __importStar(require("../services/post.service"));
 const httpStatusText_1 = require("../utils/httpStatusText");
 const api_error_1 = __importDefault(require("../errors/api.error"));
-const mongoose_1 = require("mongoose");
-const ObjectId = mongoose_1.Types.ObjectId;
 exports.addPost = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     if (req.currentUser) {
