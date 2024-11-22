@@ -44,9 +44,8 @@ const postServices = __importStar(require("../services/post.service"));
 const mongoose_1 = require("mongoose");
 exports.postSignUp = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield userServices.getUser(req.body.email);
-    if (user) {
+    if (user)
         throw new api_error_1.default('This email is already exists', 409, req.path, user);
-    }
     const newUser = yield userServices.postSignup(req.body);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
@@ -55,13 +54,11 @@ exports.postSignUp = (0, asyncWrapper_middleware_1.default)((req, res) => __awai
 }));
 exports.postLogin = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let user = yield userServices.getUser(req.body.email);
-    if (!user) {
+    if (!user)
         throw new api_error_1.default('This email is not in database', 409, req.path, { data: null });
-    }
     const correctPass = yield userServices.correctPassword(req.body.password, user);
-    if (!correctPass) {
+    if (!correctPass)
         throw new api_error_1.default("Password isn't correct", 400, req.path);
-    }
     const token = yield userServices.login(user);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
@@ -97,11 +94,9 @@ exports.getUserPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __aw
 exports.getMyPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const limit = Number(req.query.limit);
     const skip = Number(req.query.skip);
-    if (req.currentUser) {
-        const posts = yield postServices.getUserPosts(limit, skip, req.currentUser.id);
-        res.status(200).json({
-            status: httpStatusText_1.SUCCESS,
-            data: { posts }
-        });
-    }
+    const posts = yield postServices.getUserPosts(limit, skip, req.currentUser.id);
+    res.status(200).json({
+        status: httpStatusText_1.SUCCESS,
+        data: { posts }
+    });
 }));

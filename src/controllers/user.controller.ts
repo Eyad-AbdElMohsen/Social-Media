@@ -10,9 +10,7 @@ import { Types } from "mongoose";
 
 export const postSignUp = asyncWrapper( async(req: Request, res: Response) => {
     const user = await userServices.getUser(req.body.email)
-    if(user){
-        throw new ApiError('This email is already exists', 409, req.path, user)
-    }
+    if(user) throw new ApiError('This email is already exists', 409, req.path, user)
     const newUser = await userServices.postSignup(req.body)
     res.status(200).json({
         status: SUCCESS,
@@ -22,13 +20,9 @@ export const postSignUp = asyncWrapper( async(req: Request, res: Response) => {
 
 export const postLogin = asyncWrapper( async(req: Request, res: Response) => {
     let user = await userServices.getUser(req.body.email)
-    if(!user){
-        throw new ApiError('This email is not in database', 409, req.path, {data: null})
-    }
+    if(!user) throw new ApiError('This email is not in database', 409, req.path, {data: null})
     const correctPass: boolean = await userServices.correctPassword(req.body.password, user)
-    if(!correctPass){
-        throw new ApiError("Password isn't correct" ,  400, req.path)
-    }
+    if(!correctPass) throw new ApiError("Password isn't correct" ,  400, req.path)
     const token = await userServices.login(user)
     res.status(200).json({
         status: SUCCESS,
@@ -69,11 +63,9 @@ export const getUserPosts = asyncWrapper (async(req: CustomRequest, res: Respons
 export const getMyPosts = asyncWrapper (async(req: CustomRequest, res:Response) => {
     const limit: number = Number(req.query.limit);
     const skip: number = Number(req.query.skip);
-    if(req.currentUser){
-        const posts = await postServices.getUserPosts(limit, skip, req.currentUser.id)
-        res.status(200).json({
-            status: SUCCESS,
-            data: {posts}
-        })
-    }
+    const posts = await postServices.getUserPosts(limit, skip, req.currentUser!.id)
+    res.status(200).json({
+        status: SUCCESS,
+        data: {posts}
+    })
 })

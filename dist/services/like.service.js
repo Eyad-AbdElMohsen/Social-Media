@@ -21,9 +21,7 @@ const getNumberOfLikes = (post) => {
 };
 exports.getNumberOfLikes = getNumberOfLikes;
 const isLiked = (post, userId) => {
-    console.log(post.likes);
     const isLiked = post.likes.find((user) => user == userId);
-    console.log(isLiked);
     if (isLiked)
         return true;
     return false;

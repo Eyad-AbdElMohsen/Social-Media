@@ -64,9 +64,8 @@ exports.getAllPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __awa
 }));
 exports.getPost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield postServices.getPost(req.params.postId);
-    if (!post) {
+    if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
-    }
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
         data: { post }
@@ -75,9 +74,8 @@ exports.getPost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter
 exports.editPost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     let post = yield postServices.getPost(req.params.postId);
-    if (!post) {
+    if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
-    }
     yield postServices.editPost(post, {
         content: {
             text: req.body.text,
@@ -91,9 +89,8 @@ exports.editPost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaite
 }));
 exports.deletePost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let post = yield postServices.getPost(req.params.postId);
-    if (!post) {
+    if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
-    }
     yield postServices.deletePost(req.params.postId);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,

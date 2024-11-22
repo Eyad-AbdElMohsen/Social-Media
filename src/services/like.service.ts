@@ -1,5 +1,4 @@
 import { ObjectId, Types } from "mongoose"
-import mongoose from "mongoose"
 import { IPost, Post } from "../models/post.model"
 
 
@@ -14,9 +13,7 @@ export const getNumberOfLikes = (post: IPost) =>{
 }
 
 export const isLiked = (post: IPost, userId: ObjectId) =>{
-    console.log(post.likes)
     const isLiked = post.likes.find((user: ObjectId) => user == userId);
-    console.log(isLiked)
     if(isLiked)return true
     return false
 }

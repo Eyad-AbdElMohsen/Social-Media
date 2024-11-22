@@ -30,9 +30,7 @@ export const getAllPosts = asyncWrapper(async(req: Request, res: Response) => {
 
 export const getPost = asyncWrapper(async(req: CustomRequest, res: Response) => {
     const post = await postServices.getPost(req.params.postId)
-    if(!post){
-        throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
-    }
+    if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     res.status(200).json({
         status: SUCCESS,
         data: {post}
@@ -41,9 +39,7 @@ export const getPost = asyncWrapper(async(req: CustomRequest, res: Response) => 
 
 export const editPost = asyncWrapper(async(req: CustomRequest, res: Response) => {
     let post = await postServices.getPost(req.params.postId)
-    if(!post){
-        throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
-    }
+    if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     await postServices.editPost(post, {
         content: {
             text: req.body.text,
@@ -58,9 +54,7 @@ export const editPost = asyncWrapper(async(req: CustomRequest, res: Response) =>
 
 export const deletePost = asyncWrapper(async(req: CustomRequest, res: Response) => {
     let post = await postServices.getPost(req.params.postId)
-    if(!post){
-        throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
-    }
+    if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     await postServices.deletePost(req.params.postId)
     res.status(200).json({
         status: SUCCESS,
