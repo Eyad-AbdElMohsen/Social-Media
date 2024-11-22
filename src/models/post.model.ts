@@ -16,7 +16,8 @@ const postSchema: Schema = new mongoose.Schema({
     content: {
         image: { type: String, required: false },
         text: { type: String, required: false }, 
-    }
+    },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 }, {
     timestamps: true
 })
@@ -36,6 +37,7 @@ export type PostContent = {
 export interface IPost extends Document{
     userId: ObjectId,
     content: PostContent,
+    likes: ObjectId[],
     createdAt: Date,
     updatedAt: Date
 }

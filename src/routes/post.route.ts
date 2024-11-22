@@ -19,4 +19,9 @@ postRouter.route('/posts')
             .get(verifyToken, allowedTo([Role.ADMIN]), pagination, postController.getAllPosts)
             .post(verifyToken, upload.single('image'), postController.addPost)
 
+postRouter.route('/posts/likes/:postId')
+            .get(verifyToken, postController.getPostLikes)
+            .post(verifyToken, postController.likePost)
+            .delete(verifyToken, postController.removeLike)
+
 export default postRouter

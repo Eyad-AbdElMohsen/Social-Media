@@ -39,4 +39,8 @@ postRouter.route('/posts/:postId')
 postRouter.route('/posts')
     .get(verifyToken_1.verifyToken, (0, allowedTo_1.allowedTo)([userRole_1.Role.ADMIN]), pagination_middleware_1.pagination, postController.getAllPosts)
     .post(verifyToken_1.verifyToken, multer_1.upload.single('image'), postController.addPost);
+postRouter.route('/posts/likes/:postId')
+    .get(verifyToken_1.verifyToken, postController.getPostLikes)
+    .post(verifyToken_1.verifyToken, postController.likePost)
+    .delete(verifyToken_1.verifyToken, postController.removeLike);
 exports.default = postRouter;

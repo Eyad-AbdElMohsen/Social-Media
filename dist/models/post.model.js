@@ -18,7 +18,8 @@ const postSchema = new mongoose_1.default.Schema({
     content: {
         image: { type: String, required: false },
         text: { type: String, required: false },
-    }
+    },
+    likes: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'User' }]
 }, {
     timestamps: true
 });
