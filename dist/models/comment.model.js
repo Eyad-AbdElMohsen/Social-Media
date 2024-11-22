@@ -18,7 +18,7 @@ exports.commentSchema = new mongoose_1.default.Schema({
         image: { type: String, required: false },
         text: { type: String, required: false },
     },
-    replies: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Comment' }],
+    replyIds: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Comment' }],
 }, {
     timestamps: true
 });

@@ -16,7 +16,7 @@ export const commentSchema: Schema = new mongoose.Schema({
         image: { type: String, required: false },
         text: { type: String, required: false }, 
     },
-    replies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+    replyIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
 }, {
     timestamps: true
 })
@@ -27,7 +27,7 @@ export interface IComment extends Document {
         image?: string,
         text?: string
     };
-    replies?: IComment[],
+    replyIds?: ObjectId[],
     createdAt: Date,
     updatedAt: Date
 }

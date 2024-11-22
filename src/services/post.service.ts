@@ -27,7 +27,7 @@ export const getUserPosts = async(limit: number, skip: number, userId: Types.Obj
     return posts
 }
 
-export const getPost = async(id: string) => {
+export const getPost = async(id: Types.ObjectId) => {
     const post = await Post.findById(id)
     return post
 }

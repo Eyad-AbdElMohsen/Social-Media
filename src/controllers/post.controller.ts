@@ -3,6 +3,7 @@ import asyncWrapper from "../middlewares/asyncWrapper.middleware";
 import * as postServices from '../services/post.service'
 import * as likeServices from '../services/like.service'
 import * as commentService from '../services/comment.service'
+import * as replyService from '../services/reply.service'
 import { SUCCESS } from "../utils/httpStatusText";
 import { CustomRequest } from "../middlewares/verifyToken";
 import ApiError from "../errors/api.error";
@@ -31,7 +32,7 @@ export const getAllPosts = asyncWrapper(async(req: Request, res: Response) => {
 })
 
 export const getPost = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    const post = await postServices.getPost(req.params.postId)
+    const post = await postServices.getPost(new Types.ObjectId(req.params.postId))
     if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     res.status(200).json({
         status: SUCCESS,
@@ -40,7 +41,7 @@ export const getPost = asyncWrapper(async(req: CustomRequest, res: Response) => 
 })
 
 export const editPost = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let post = await postServices.getPost(req.params.postId)
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
     if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     await postServices.editPost(post, {
         content: {
@@ -55,7 +56,7 @@ export const editPost = asyncWrapper(async(req: CustomRequest, res: Response) =>
 })
 
 export const deletePost = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let post = await postServices.getPost(req.params.postId)
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
     if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     await postServices.deletePost(req.params.postId)
     res.status(200).json({
@@ -65,7 +66,7 @@ export const deletePost = asyncWrapper(async(req: CustomRequest, res: Response) 
 })
 
 export const getPostLikes = asyncWrapper(async(req: Request, res: Response) => {
-    let post = await postServices.getPost(req.params.postId)
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
     if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     let users = likeServices.getPostLikes(post)
     let numberOfLikes = likeServices.getNumberOfLikes(post)
@@ -79,7 +80,7 @@ export const getPostLikes = asyncWrapper(async(req: Request, res: Response) => {
 })
 
 export const likePost = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let post = await postServices.getPost(req.params.postId)
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
     if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     let userId = req.currentUser!.id
     let isLiked = likeServices.isLiked(post, userId)
@@ -90,7 +91,7 @@ export const likePost = asyncWrapper(async(req: CustomRequest, res: Response) =>
 })
 
 export const removeLike = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let post = await postServices.getPost(req.params.postId)
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
     if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     let userId = req.currentUser!.id
     let isLiked = likeServices.isLiked(post, userId)
@@ -100,7 +101,7 @@ export const removeLike = asyncWrapper(async(req: CustomRequest, res: Response) 
 })
 
 export const getPostComments = asyncWrapper(async(req: Request, res: Response) => {
-    let post = await postServices.getPost(req.params.postId)
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
     if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     let comments = await commentService.getPostComments(post)
     res.status(200).json({
@@ -110,7 +111,7 @@ export const getPostComments = asyncWrapper(async(req: Request, res: Response) =
 })
 
 export const getPostComment = asyncWrapper(async(req: Request, res: Response) => { 
-    let post = await postServices.getPost(req.params.postId)
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
     if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     let commentId = new Types.ObjectId(req.params.commentId);
     let comment = await commentService.getCommentById(commentId)
@@ -122,7 +123,7 @@ export const getPostComment = asyncWrapper(async(req: Request, res: Response) =>
 })
 
 export const addPostComment = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let post = await postServices.getPost(req.params.postId)
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
     if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     let newComment = await commentService.addPostComment(post, {
         userId: req.currentUser!.id, 
@@ -138,7 +139,7 @@ export const addPostComment = asyncWrapper(async(req: CustomRequest, res: Respon
 })
 
 export const editPostComment = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let post = await postServices.getPost(req.params.postId)
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
     if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     let commentId = new Types.ObjectId(req.params.commentId);
     let comment = await commentService.getCommentById(commentId)
@@ -155,7 +156,7 @@ export const editPostComment = asyncWrapper(async(req: CustomRequest, res: Respo
 })
 
 export const deletePostComment = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let post = await postServices.getPost(req.params.postId)
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
     if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     let commentId = new Types.ObjectId(req.params.commentId);
     let comment = await commentService.getCommentById(commentId)
@@ -163,3 +164,31 @@ export const deletePostComment = asyncWrapper(async(req: CustomRequest, res: Res
     await commentService.deletePostComment(commentId)
     res.status(200).json({satus: SUCCESS, data: null})
 })
+
+export const getCommentReplies = asyncWrapper(async(req: Request, res: Response) => {
+    let comment = await commentService.getCommentById(new Types.ObjectId(req.params.commentId))
+    if(!comment) throw new ApiError('This id has no available comment', 404, req.path, {id: req.params.postId})
+    let replies = await replyService.getCommentReplies(comment)
+    res.status(200).json({
+        status: SUCCESS,
+        data: {replies}
+    })
+})
+
+
+export const addCommentReply = asyncWrapper(async(req: CustomRequest, res: Response) => {
+    let comment = await commentService.getCommentById(new Types.ObjectId(req.params.commentId))
+    if(!comment) throw new ApiError('This id has no available comment', 404, req.path, {id: req.params.postId})
+    let newReply = await replyService.addCommentReply(comment, {
+        userId: req.currentUser!.id, 
+        content: {
+            text: req.body.text, 
+            fileName: req.file?.filename
+        }
+    })
+    res.status(200).json({
+        status: SUCCESS,
+        data: {newReply}
+    })
+})
+

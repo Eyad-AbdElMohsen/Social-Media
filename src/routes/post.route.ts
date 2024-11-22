@@ -27,10 +27,18 @@ postRouter.route('/posts/:postId/likes')
 postRouter.route('/posts/:postId/comments')
             .get(verifyToken, postController.getPostComments)
             .post(verifyToken, upload.single('image'), postController.addPostComment)
-
+            
+// to delete, edit and get a comment (or a reply)
 postRouter.route('/posts/:postId/comments/:commentId')
             .get(verifyToken, postController.getPostComment)
             .patch(verifyToken, isCommentOwner, upload.single('image'), postController.editPostComment)
             .delete(verifyToken, isCommentOwner, postController.deletePostComment)
+
+postRouter.route('/posts/:postId/comments/:commentId/replies')
+            .get(verifyToken, postController.getCommentReplies)
+            .post(verifyToken, upload.single('image'), postController.addCommentReply)
+
+
+
 
 export default postRouter

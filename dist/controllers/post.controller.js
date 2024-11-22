@@ -35,11 +35,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deletePostComment = exports.editPostComment = exports.addPostComment = exports.getPostComment = exports.getPostComments = exports.removeLike = exports.likePost = exports.getPostLikes = exports.deletePost = exports.editPost = exports.getPost = exports.getAllPosts = exports.addPost = void 0;
+exports.addCommentReply = exports.getCommentReplies = exports.deletePostComment = exports.editPostComment = exports.addPostComment = exports.getPostComment = exports.getPostComments = exports.removeLike = exports.likePost = exports.getPostLikes = exports.deletePost = exports.editPost = exports.getPost = exports.getAllPosts = exports.addPost = void 0;
 const asyncWrapper_middleware_1 = __importDefault(require("../middlewares/asyncWrapper.middleware"));
 const postServices = __importStar(require("../services/post.service"));
 const likeServices = __importStar(require("../services/like.service"));
 const commentService = __importStar(require("../services/comment.service"));
+const replyService = __importStar(require("../services/reply.service"));
 const httpStatusText_1 = require("../utils/httpStatusText");
 const api_error_1 = __importDefault(require("../errors/api.error"));
 const mongoose_1 = require("mongoose");
@@ -65,7 +66,7 @@ exports.getAllPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __awa
     });
 }));
 exports.getPost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const post = yield postServices.getPost(req.params.postId);
+    const post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
     res.status(200).json({
@@ -75,7 +76,7 @@ exports.getPost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter
 }));
 exports.editPost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    let post = yield postServices.getPost(req.params.postId);
+    let post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
     yield postServices.editPost(post, {
@@ -90,7 +91,7 @@ exports.editPost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaite
     });
 }));
 exports.deletePost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let post = yield postServices.getPost(req.params.postId);
+    let post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
     yield postServices.deletePost(req.params.postId);
@@ -100,7 +101,7 @@ exports.deletePost = (0, asyncWrapper_middleware_1.default)((req, res) => __awai
     });
 }));
 exports.getPostLikes = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let post = yield postServices.getPost(req.params.postId);
+    let post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
     let users = likeServices.getPostLikes(post);
@@ -114,7 +115,7 @@ exports.getPostLikes = (0, asyncWrapper_middleware_1.default)((req, res) => __aw
     });
 }));
 exports.likePost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let post = yield postServices.getPost(req.params.postId);
+    let post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
     let userId = req.currentUser.id;
@@ -127,7 +128,7 @@ exports.likePost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaite
     res.status(200).json({ status: httpStatusText_1.SUCCESS });
 }));
 exports.removeLike = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let post = yield postServices.getPost(req.params.postId);
+    let post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
     let userId = req.currentUser.id;
@@ -138,7 +139,7 @@ exports.removeLike = (0, asyncWrapper_middleware_1.default)((req, res) => __awai
     res.status(200).json({ status: httpStatusText_1.SUCCESS });
 }));
 exports.getPostComments = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let post = yield postServices.getPost(req.params.postId);
+    let post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
     let comments = yield commentService.getPostComments(post);
@@ -148,7 +149,7 @@ exports.getPostComments = (0, asyncWrapper_middleware_1.default)((req, res) => _
     });
 }));
 exports.getPostComment = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let post = yield postServices.getPost(req.params.postId);
+    let post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
     let commentId = new mongoose_1.Types.ObjectId(req.params.commentId);
@@ -162,7 +163,7 @@ exports.getPostComment = (0, asyncWrapper_middleware_1.default)((req, res) => __
 }));
 exports.addPostComment = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    let post = yield postServices.getPost(req.params.postId);
+    let post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
     let newComment = yield commentService.addPostComment(post, {
@@ -179,7 +180,7 @@ exports.addPostComment = (0, asyncWrapper_middleware_1.default)((req, res) => __
 }));
 exports.editPostComment = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    let post = yield postServices.getPost(req.params.postId);
+    let post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
     let commentId = new mongoose_1.Types.ObjectId(req.params.commentId);
@@ -197,7 +198,7 @@ exports.editPostComment = (0, asyncWrapper_middleware_1.default)((req, res) => _
     res.status(200).json({ satus: httpStatusText_1.SUCCESS, data: { commentAfterEdit } });
 }));
 exports.deletePostComment = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let post = yield postServices.getPost(req.params.postId);
+    let post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
         throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
     let commentId = new mongoose_1.Types.ObjectId(req.params.commentId);
@@ -206,4 +207,31 @@ exports.deletePostComment = (0, asyncWrapper_middleware_1.default)((req, res) =>
         throw new api_error_1.default('This id has no available comment', 404, req.path, { id: req.params.commentId });
     yield commentService.deletePostComment(commentId);
     res.status(200).json({ satus: httpStatusText_1.SUCCESS, data: null });
+}));
+exports.getCommentReplies = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let comment = yield commentService.getCommentById(new mongoose_1.Types.ObjectId(req.params.commentId));
+    if (!comment)
+        throw new api_error_1.default('This id has no available comment', 404, req.path, { id: req.params.postId });
+    let replies = yield replyService.getCommentReplies(comment);
+    res.status(200).json({
+        status: httpStatusText_1.SUCCESS,
+        data: { replies }
+    });
+}));
+exports.addCommentReply = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    let comment = yield commentService.getCommentById(new mongoose_1.Types.ObjectId(req.params.commentId));
+    if (!comment)
+        throw new api_error_1.default('This id has no available comment', 404, req.path, { id: req.params.postId });
+    let newReply = yield replyService.addCommentReply(comment, {
+        userId: req.currentUser.id,
+        content: {
+            text: req.body.text,
+            fileName: (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename
+        }
+    });
+    res.status(200).json({
+        status: httpStatusText_1.SUCCESS,
+        data: { newReply }
+    });
 }));
