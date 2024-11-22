@@ -1,10 +1,12 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import asyncWrapper from "../middlewares/asyncWrapper.middleware";
 import * as postServices from '../services/post.service'
 import * as likeServices from '../services/like.service'
+import * as commentService from '../services/comment.service'
 import { SUCCESS } from "../utils/httpStatusText";
 import { CustomRequest } from "../middlewares/verifyToken";
 import ApiError from "../errors/api.error";
+import { Types } from "mongoose";
 
 export const addPost = asyncWrapper( async(req: CustomRequest, res: Response) => {
     const newPost = await postServices.addPost({
@@ -95,4 +97,69 @@ export const removeLike = asyncWrapper(async(req: CustomRequest, res: Response) 
     if(!isLiked)throw new ApiError('This user is already not like the post before', 409, req.path, {id: req.params.postId})
     await likeServices.removeLike(userId, post)
     res.status(200).json({status: SUCCESS})
+})
+
+export const getPostComments = asyncWrapper(async(req: Request, res: Response) => {
+    let post = await postServices.getPost(req.params.postId)
+    if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
+    let comments = await commentService.getPostComments(post)
+    res.status(200).json({
+        status: SUCCESS,
+        data: {comments}
+    })
+})
+
+export const getPostComment = asyncWrapper(async(req: Request, res: Response) => { 
+    let post = await postServices.getPost(req.params.postId)
+    if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
+    let commentId = new Types.ObjectId(req.params.commentId);
+    let comment = await commentService.getCommentById(commentId)
+    if(!comment) throw new ApiError('This id has no available comment', 404, req.path, {id: req.params.commentId})
+    res.status(200).json({
+        status: SUCCESS,
+        data: comment
+    })
+})
+
+export const addPostComment = asyncWrapper(async(req: CustomRequest, res: Response) => {
+    let post = await postServices.getPost(req.params.postId)
+    if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
+    let newComment = await commentService.addPostComment(post, {
+        userId: req.currentUser!.id, 
+        content: {
+            text: req.body.text, 
+            fileName: req.file?.filename
+        }
+    })
+    res.status(200).json({
+        status: SUCCESS,
+        data: {newComment}
+    })
+})
+
+export const editPostComment = asyncWrapper(async(req: CustomRequest, res: Response) => {
+    let post = await postServices.getPost(req.params.postId)
+    if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
+    let commentId = new Types.ObjectId(req.params.commentId);
+    let comment = await commentService.getCommentById(commentId)
+    if(!comment) throw new ApiError('This id has no available comment', 404, req.path, {id: req.params.commentId})
+    const commentAfterEdit = await commentService.editPostComment({
+        userId: req.currentUser!.id, 
+        content: {
+            text: req.body.text, 
+            fileName: req.file?.filename
+        },
+        _id: commentId
+    })
+    res.status(200).json({satus: SUCCESS, data:{commentAfterEdit}})
+})
+
+export const deletePostComment = asyncWrapper(async(req: CustomRequest, res: Response) => {
+    let post = await postServices.getPost(req.params.postId)
+    if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
+    let commentId = new Types.ObjectId(req.params.commentId);
+    let comment = await commentService.getCommentById(commentId)
+    if(!comment) throw new ApiError('This id has no available comment', 404, req.path, {id: req.params.commentId})
+    await commentService.deletePostComment(commentId)
+    res.status(200).json({satus: SUCCESS, data: null})
 })

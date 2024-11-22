@@ -11,31 +11,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.removeLike = exports.likePost = exports.isLiked = exports.getNumberOfLikes = exports.getPostLikes = void 0;
 const getPostLikes = (post) => {
-    let users = post.likes;
+    let users = post.likesUserId;
     return users;
 };
 exports.getPostLikes = getPostLikes;
 const getNumberOfLikes = (post) => {
-    let numberOfLikes = post.likes.length;
+    let numberOfLikes = post.likesUserId.length;
     return numberOfLikes;
 };
 exports.getNumberOfLikes = getNumberOfLikes;
 const isLiked = (post, userId) => {
-    const isLiked = post.likes.find((user) => user == userId);
+    const isLiked = post.likesUserId.find((user) => user == userId);
     if (isLiked)
         return true;
     return false;
 };
 exports.isLiked = isLiked;
 const likePost = (userId, post) => __awaiter(void 0, void 0, void 0, function* () {
-    post.likes.push(userId);
+    post.likesUserId.push(userId);
     yield post.save();
     return true;
 });
 exports.likePost = likePost;
 const removeLike = (userId, post) => __awaiter(void 0, void 0, void 0, function* () {
-    let index = post.likes.indexOf(userId);
-    post.likes.splice(index, 1);
+    let index = post.likesUserId.indexOf(userId);
+    post.likesUserId.splice(index, 1);
     yield post.save();
     return true;
 });

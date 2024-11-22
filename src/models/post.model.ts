@@ -1,4 +1,4 @@
-import mongoose, { Model, Schema, Document, ObjectId } from "mongoose"
+import mongoose, { Model, Schema, Document, ObjectId, Types } from "mongoose"
 import dotenv from 'dotenv'
 import ApiError from "../errors/api.error"
 
@@ -11,16 +11,19 @@ if(typeof DB_URL == 'string')
 else
     throw("DB_URL must be a satring")
 
+
 const postSchema: Schema = new mongoose.Schema({
-    userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
+    userId: {type: Types.ObjectId, ref: 'User', required: true},
     content: {
         image: { type: String, required: false },
         text: { type: String, required: false }, 
     },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+    likesUserId: [{ type: Types.ObjectId, ref: 'User' }],
+    commentIds: [{type: Types.ObjectId, ref: 'Comment'}]
 }, {
     timestamps: true
 })
+
 
 postSchema.pre<IPost>('save', function(next) {
     if (!this.content.text && !this.content.image) {
@@ -37,7 +40,8 @@ export type PostContent = {
 export interface IPost extends Document{
     userId: ObjectId,
     content: PostContent,
-    likes: ObjectId[],
+    likesUserId: ObjectId[],
+    commentIds: ObjectId[],
     createdAt: Date,
     updatedAt: Date
 }

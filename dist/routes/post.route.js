@@ -30,17 +30,24 @@ const multer_1 = require("../utils/multer");
 const allowedTo_1 = require("../middlewares/allowedTo");
 const userRole_1 = require("../utils/userRole");
 const pagination_middleware_1 = require("../middlewares/pagination.middleware");
-const isPostOwner_1 = require("../middlewares/isPostOwner");
+const isOwner_1 = require("../middlewares/isOwner");
 const postRouter = (0, express_1.Router)();
 postRouter.route('/posts/:postId')
     .get(verifyToken_1.verifyToken, postController.getPost)
-    .patch(verifyToken_1.verifyToken, isPostOwner_1.isPostOwner, multer_1.upload.single('image'), postController.editPost)
-    .delete(verifyToken_1.verifyToken, isPostOwner_1.isPostOwner, postController.deletePost);
+    .patch(verifyToken_1.verifyToken, isOwner_1.isPostOwner, multer_1.upload.single('image'), postController.editPost)
+    .delete(verifyToken_1.verifyToken, isOwner_1.isPostOwner, postController.deletePost);
 postRouter.route('/posts')
     .get(verifyToken_1.verifyToken, (0, allowedTo_1.allowedTo)([userRole_1.Role.ADMIN]), pagination_middleware_1.pagination, postController.getAllPosts)
     .post(verifyToken_1.verifyToken, multer_1.upload.single('image'), postController.addPost);
-postRouter.route('/posts/likes/:postId')
+postRouter.route('/posts/:postId/likes')
     .get(verifyToken_1.verifyToken, postController.getPostLikes)
     .post(verifyToken_1.verifyToken, postController.likePost)
     .delete(verifyToken_1.verifyToken, postController.removeLike);
+postRouter.route('/posts/:postId/comments')
+    .get(verifyToken_1.verifyToken, postController.getPostComments)
+    .post(verifyToken_1.verifyToken, multer_1.upload.single('image'), postController.addPostComment);
+postRouter.route('/posts/:postId/comments/:commentId')
+    .get(verifyToken_1.verifyToken, postController.getPostComment)
+    .patch(verifyToken_1.verifyToken, isOwner_1.isCommentOwner, multer_1.upload.single('image'), postController.editPostComment)
+    .delete(verifyToken_1.verifyToken, isOwner_1.isCommentOwner, postController.deletePostComment);
 exports.default = postRouter;
