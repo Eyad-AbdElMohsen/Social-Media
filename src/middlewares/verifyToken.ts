@@ -5,12 +5,10 @@ import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
 import { secretKey } from "../utils/generateJWT";
 import { JwtPayload} from '../models/user.model'
+import { CustomRequest } from "../utils/customRequest";
 
 dotenv.config()
 
-export interface CustomRequest extends Request {
-    currentUser?: JwtPayload
-}
 
 export const verifyToken = asyncWrapper(async(req: CustomRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization

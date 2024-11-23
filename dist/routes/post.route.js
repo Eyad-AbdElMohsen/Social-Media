@@ -31,31 +31,32 @@ const allowedTo_1 = require("../middlewares/allowedTo");
 const userRole_1 = require("../utils/userRole");
 const pagination_middleware_1 = require("../middlewares/pagination.middleware");
 const isOwner_1 = require("../middlewares/isOwner");
+const isValid_1 = require("../middlewares/isValid");
 const postRouter = (0, express_1.Router)();
 postRouter.route('/posts')
     .get(verifyToken_1.verifyToken, (0, allowedTo_1.allowedTo)([userRole_1.Role.ADMIN]), pagination_middleware_1.pagination, postController.getAllPosts)
     .post(verifyToken_1.verifyToken, multer_1.upload.single('image'), postController.addPost);
 // to delete, edit and get a post (or a share)
 postRouter.route('/posts/:postId')
-    .get(verifyToken_1.verifyToken, postController.getPost)
-    .patch(verifyToken_1.verifyToken, isOwner_1.isPostOwner, multer_1.upload.single('image'), postController.editPost)
-    .delete(verifyToken_1.verifyToken, isOwner_1.isPostOwner, postController.deletePost);
+    .get(verifyToken_1.verifyToken, isValid_1.isValidPost, postController.getPost)
+    .patch(verifyToken_1.verifyToken, isValid_1.isValidPost, isOwner_1.isPostOwner, multer_1.upload.single('image'), postController.editPost)
+    .delete(verifyToken_1.verifyToken, isValid_1.isValidPost, isOwner_1.isPostOwner, postController.deletePost);
 postRouter.route('/posts/:postId/likes')
-    .get(verifyToken_1.verifyToken, postController.getPostLikes)
-    .post(verifyToken_1.verifyToken, postController.likePost)
-    .delete(verifyToken_1.verifyToken, postController.removeLike);
+    .get(verifyToken_1.verifyToken, isValid_1.isValidPost, postController.getPostLikes)
+    .post(verifyToken_1.verifyToken, isValid_1.isValidPost, postController.likePost)
+    .delete(verifyToken_1.verifyToken, isValid_1.isValidPost, postController.removeLike);
 postRouter.route('/posts/:postId/comments')
-    .get(verifyToken_1.verifyToken, postController.getPostComments)
-    .post(verifyToken_1.verifyToken, multer_1.upload.single('image'), postController.addPostComment);
+    .get(verifyToken_1.verifyToken, isValid_1.isValidPost, postController.getPostComments)
+    .post(verifyToken_1.verifyToken, isValid_1.isValidPost, multer_1.upload.single('image'), postController.addPostComment);
 // to delete, edit and get a comment (or a reply)
 postRouter.route('/posts/:postId/comments/:commentId')
-    .get(verifyToken_1.verifyToken, postController.getPostComment)
-    .patch(verifyToken_1.verifyToken, isOwner_1.isCommentOwner, multer_1.upload.single('image'), postController.editPostComment)
-    .delete(verifyToken_1.verifyToken, isOwner_1.isCommentOwner, postController.deletePostComment);
+    .get(verifyToken_1.verifyToken, isValid_1.isValidPost, postController.getPostComment)
+    .patch(verifyToken_1.verifyToken, isValid_1.isValidPost, isValid_1.isValidComment, isOwner_1.isCommentOwner, multer_1.upload.single('image'), postController.editPostComment)
+    .delete(verifyToken_1.verifyToken, isValid_1.isValidPost, isValid_1.isValidComment, isOwner_1.isCommentOwner, postController.deletePostComment);
 postRouter.route('/posts/:postId/comments/:commentId/replies')
-    .get(verifyToken_1.verifyToken, postController.getCommentReplies)
-    .post(verifyToken_1.verifyToken, multer_1.upload.single('image'), postController.addCommentReply);
+    .get(verifyToken_1.verifyToken, isValid_1.isValidPost, isValid_1.isValidComment, postController.getCommentReplies)
+    .post(verifyToken_1.verifyToken, isValid_1.isValidPost, isValid_1.isValidComment, multer_1.upload.single('image'), postController.addCommentReply);
 postRouter.route('/posts/:postId/shares')
-    .get(verifyToken_1.verifyToken, postController.getPostShares)
-    .post(verifyToken_1.verifyToken, multer_1.upload.single('image'), postController.addPostShare);
+    .get(verifyToken_1.verifyToken, isValid_1.isValidPost, postController.getPostShares)
+    .post(verifyToken_1.verifyToken, isValid_1.isValidPost, multer_1.upload.single('image'), postController.addPostShare);
 exports.default = postRouter;

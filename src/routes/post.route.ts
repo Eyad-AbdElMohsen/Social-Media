@@ -6,6 +6,7 @@ import { allowedTo } from '../middlewares/allowedTo';
 import { Role } from '../utils/userRole';
 import { pagination } from '../middlewares/pagination.middleware';
 import { isCommentOwner, isPostOwner } from '../middlewares/isOwner';
+import { isValidComment, isValidPost } from '../middlewares/isValid';
 
 const postRouter = Router()
             
@@ -16,32 +17,32 @@ postRouter.route('/posts')
 
 // to delete, edit and get a post (or a share)
 postRouter.route('/posts/:postId')
-            .get(verifyToken, postController.getPost)
-            .patch(verifyToken, isPostOwner, upload.single('image'), postController.editPost)
-            .delete(verifyToken, isPostOwner, postController.deletePost)
+            .get(verifyToken, isValidPost, postController.getPost)
+            .patch(verifyToken, isValidPost, isPostOwner, upload.single('image'), postController.editPost)
+            .delete(verifyToken, isValidPost, isPostOwner, postController.deletePost)
 
 postRouter.route('/posts/:postId/likes')
-            .get(verifyToken, postController.getPostLikes)
-            .post(verifyToken, postController.likePost)
-            .delete(verifyToken, postController.removeLike)
+            .get(verifyToken, isValidPost, postController.getPostLikes)
+            .post(verifyToken, isValidPost, postController.likePost)
+            .delete(verifyToken, isValidPost, postController.removeLike)
 
 postRouter.route('/posts/:postId/comments')
-            .get(verifyToken, postController.getPostComments)
-            .post(verifyToken, upload.single('image'), postController.addPostComment)
+            .get(verifyToken, isValidPost, postController.getPostComments)
+            .post(verifyToken, isValidPost, upload.single('image'), postController.addPostComment)
             
 // to delete, edit and get a comment (or a reply)
 postRouter.route('/posts/:postId/comments/:commentId')
-            .get(verifyToken, postController.getPostComment)
-            .patch(verifyToken, isCommentOwner, upload.single('image'), postController.editPostComment)
-            .delete(verifyToken, isCommentOwner, postController.deletePostComment)
+            .get(verifyToken, isValidPost, postController.getPostComment)
+            .patch(verifyToken, isValidPost, isValidComment, isCommentOwner, upload.single('image'), postController.editPostComment)
+            .delete(verifyToken, isValidPost, isValidComment, isCommentOwner, postController.deletePostComment)
 
 postRouter.route('/posts/:postId/comments/:commentId/replies')
-            .get(verifyToken, postController.getCommentReplies)
-            .post(verifyToken, upload.single('image'), postController.addCommentReply)
+            .get(verifyToken, isValidPost, isValidComment, postController.getCommentReplies)
+            .post(verifyToken, isValidPost, isValidComment, upload.single('image'), postController.addCommentReply)
 
 postRouter.route('/posts/:postId/shares')
-            .get(verifyToken, postController.getPostShares)
-            .post(verifyToken, upload.single('image'), postController.addPostShare)
+            .get(verifyToken, isValidPost, postController.getPostShares)
+            .post(verifyToken, isValidPost, upload.single('image'), postController.addPostShare)
 
 
 
