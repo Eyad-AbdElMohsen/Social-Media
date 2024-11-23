@@ -168,6 +168,8 @@ export const deletePostComment = asyncWrapper(async(req: CustomRequest, res: Res
 })
 
 export const getCommentReplies = asyncWrapper(async(req: Request, res: Response) => {
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
+    if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     let comment = await commentService.getCommentById(new Types.ObjectId(req.params.commentId))
     if(!comment) throw new ApiError('This id has no available comment', 404, req.path, {id: req.params.postId})
     let replies = await replyService.getCommentReplies(comment)
@@ -179,6 +181,8 @@ export const getCommentReplies = asyncWrapper(async(req: Request, res: Response)
 
 
 export const addCommentReply = asyncWrapper(async(req: CustomRequest, res: Response) => {
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
+    if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
     let comment = await commentService.getCommentById(new Types.ObjectId(req.params.commentId))
     if(!comment) throw new ApiError('This id has no available comment', 404, req.path, {id: req.params.postId})
     let newReply = await replyService.addCommentReply(comment, {
