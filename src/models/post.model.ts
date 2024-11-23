@@ -14,12 +14,14 @@ else
 
 const postSchema: Schema = new mongoose.Schema({
     userId: {type: Types.ObjectId, ref: 'User', required: true},
+    originalPost: {type: Types.ObjectId},
     content: {
         image: { type: String, required: false },
         text: { type: String, required: false }, 
     },
     likesUserId: [{ type: Types.ObjectId, ref: 'User' }],
-    commentIds: [{type: Types.ObjectId, ref: 'Comment'}]
+    commentIds: [{type: Types.ObjectId, ref: 'Comment'}],
+    shareIds: [{type: Types.ObjectId, ref: 'Post'}],
 }, {
     timestamps: true
 })
@@ -39,9 +41,11 @@ export type PostContent = {
 
 export interface IPost extends Document{
     userId: ObjectId,
+    originalPost: ObjectId,
     content: PostContent,
     likesUserId: ObjectId[],
     commentIds: ObjectId[],
+    shareIds: ObjectId[],
     createdAt: Date,
     updatedAt: Date
 }
@@ -50,10 +54,15 @@ export interface UpdatePostBody {
     content: PostContent
 }
 
-export type AddPostBody = {
+export interface AddPostBody  {
     userId: ObjectId,
     text: string | undefined, 
     fileName: string | undefined
 }
+
+export interface AddShareBody extends AddPostBody{
+    originalPost: ObjectId
+}
+
 
 export const Post: Model<IPost> = mongoose.model<IPost>('Post', postSchema);

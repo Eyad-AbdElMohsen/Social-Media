@@ -32,13 +32,14 @@ const userRole_1 = require("../utils/userRole");
 const pagination_middleware_1 = require("../middlewares/pagination.middleware");
 const isOwner_1 = require("../middlewares/isOwner");
 const postRouter = (0, express_1.Router)();
+postRouter.route('/posts')
+    .get(verifyToken_1.verifyToken, (0, allowedTo_1.allowedTo)([userRole_1.Role.ADMIN]), pagination_middleware_1.pagination, postController.getAllPosts)
+    .post(verifyToken_1.verifyToken, multer_1.upload.single('image'), postController.addPost);
+// to delete, edit and get a post (or a share)
 postRouter.route('/posts/:postId')
     .get(verifyToken_1.verifyToken, postController.getPost)
     .patch(verifyToken_1.verifyToken, isOwner_1.isPostOwner, multer_1.upload.single('image'), postController.editPost)
     .delete(verifyToken_1.verifyToken, isOwner_1.isPostOwner, postController.deletePost);
-postRouter.route('/posts')
-    .get(verifyToken_1.verifyToken, (0, allowedTo_1.allowedTo)([userRole_1.Role.ADMIN]), pagination_middleware_1.pagination, postController.getAllPosts)
-    .post(verifyToken_1.verifyToken, multer_1.upload.single('image'), postController.addPost);
 postRouter.route('/posts/:postId/likes')
     .get(verifyToken_1.verifyToken, postController.getPostLikes)
     .post(verifyToken_1.verifyToken, postController.likePost)
@@ -54,4 +55,7 @@ postRouter.route('/posts/:postId/comments/:commentId')
 postRouter.route('/posts/:postId/comments/:commentId/replies')
     .get(verifyToken_1.verifyToken, postController.getCommentReplies)
     .post(verifyToken_1.verifyToken, multer_1.upload.single('image'), postController.addCommentReply);
+postRouter.route('/posts/:postId/shares')
+    .get(verifyToken_1.verifyToken, postController.getPostShares)
+    .post(verifyToken_1.verifyToken, multer_1.upload.single('image'), postController.addPostShare);
 exports.default = postRouter;

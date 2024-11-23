@@ -10,14 +10,15 @@ import { isCommentOwner, isPostOwner } from '../middlewares/isOwner';
 const postRouter = Router()
             
 
+postRouter.route('/posts')
+.get(verifyToken, allowedTo([Role.ADMIN]), pagination, postController.getAllPosts)
+.post(verifyToken, upload.single('image'), postController.addPost)
+
+// to delete, edit and get a post (or a share)
 postRouter.route('/posts/:postId')
             .get(verifyToken, postController.getPost)
             .patch(verifyToken, isPostOwner, upload.single('image'), postController.editPost)
             .delete(verifyToken, isPostOwner, postController.deletePost)
-
-postRouter.route('/posts')
-            .get(verifyToken, allowedTo([Role.ADMIN]), pagination, postController.getAllPosts)
-            .post(verifyToken, upload.single('image'), postController.addPost)
 
 postRouter.route('/posts/:postId/likes')
             .get(verifyToken, postController.getPostLikes)
@@ -37,6 +38,10 @@ postRouter.route('/posts/:postId/comments/:commentId')
 postRouter.route('/posts/:postId/comments/:commentId/replies')
             .get(verifyToken, postController.getCommentReplies)
             .post(verifyToken, upload.single('image'), postController.addCommentReply)
+
+postRouter.route('/posts/:postId/shares')
+            .get(verifyToken, postController.getPostShares)
+            .post(verifyToken, upload.single('image'), postController.addPostShare)
 
 
 

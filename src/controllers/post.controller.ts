@@ -4,10 +4,12 @@ import * as postServices from '../services/post.service'
 import * as likeServices from '../services/like.service'
 import * as commentService from '../services/comment.service'
 import * as replyService from '../services/reply.service'
+import * as shareService from '../services/share.service'
 import { SUCCESS } from "../utils/httpStatusText";
 import { CustomRequest } from "../middlewares/verifyToken";
 import ApiError from "../errors/api.error";
-import { Types } from "mongoose";
+import { Types, ObjectId } from "mongoose";
+
 
 export const addPost = asyncWrapper( async(req: CustomRequest, res: Response) => {
     const newPost = await postServices.addPost({
@@ -192,3 +194,27 @@ export const addCommentReply = asyncWrapper(async(req: CustomRequest, res: Respo
     })
 })
 
+export const getPostShares = asyncWrapper(async(req: CustomRequest, res: Response) => {
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
+    if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
+    let shares = await shareService.getPostShares(post)
+    res.status(200).json({
+        status: SUCCESS,
+        data: {shares}
+    })
+})
+
+export const addPostShare = asyncWrapper(async(req: CustomRequest, res: Response) => {
+    let post = await postServices.getPost(new Types.ObjectId(req.params.postId))
+    if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
+    const newShare = await shareService.addPostShare(post, {
+        userId: req.currentUser!.id, 
+        text: req.body.text, 
+        fileName: req.file?.filename,
+        originalPost: post._id as ObjectId
+    })
+    res.status(200).json({
+        status: SUCCESS,
+        data: {newShare}
+    })
+})

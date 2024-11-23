@@ -35,12 +35,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addCommentReply = exports.getCommentReplies = exports.deletePostComment = exports.editPostComment = exports.addPostComment = exports.getPostComment = exports.getPostComments = exports.removeLike = exports.likePost = exports.getPostLikes = exports.deletePost = exports.editPost = exports.getPost = exports.getAllPosts = exports.addPost = void 0;
+exports.addPostShare = exports.getPostShares = exports.addCommentReply = exports.getCommentReplies = exports.deletePostComment = exports.editPostComment = exports.addPostComment = exports.getPostComment = exports.getPostComments = exports.removeLike = exports.likePost = exports.getPostLikes = exports.deletePost = exports.editPost = exports.getPost = exports.getAllPosts = exports.addPost = void 0;
 const asyncWrapper_middleware_1 = __importDefault(require("../middlewares/asyncWrapper.middleware"));
 const postServices = __importStar(require("../services/post.service"));
 const likeServices = __importStar(require("../services/like.service"));
 const commentService = __importStar(require("../services/comment.service"));
 const replyService = __importStar(require("../services/reply.service"));
+const shareService = __importStar(require("../services/share.service"));
 const httpStatusText_1 = require("../utils/httpStatusText");
 const api_error_1 = __importDefault(require("../errors/api.error"));
 const mongoose_1 = require("mongoose");
@@ -233,5 +234,31 @@ exports.addCommentReply = (0, asyncWrapper_middleware_1.default)((req, res) => _
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
         data: { newReply }
+    });
+}));
+exports.getPostShares = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
+    if (!post)
+        throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
+    let shares = yield shareService.getPostShares(post);
+    res.status(200).json({
+        status: httpStatusText_1.SUCCESS,
+        data: { shares }
+    });
+}));
+exports.addPostShare = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    let post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
+    if (!post)
+        throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
+    const newShare = yield shareService.addPostShare(post, {
+        userId: req.currentUser.id,
+        text: req.body.text,
+        fileName: (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename,
+        originalPost: post._id
+    });
+    res.status(200).json({
+        status: httpStatusText_1.SUCCESS,
+        data: { newShare }
     });
 }));

@@ -38,12 +38,14 @@ else
     throw ("DB_URL must be a satring");
 const postSchema = new mongoose_1.default.Schema({
     userId: { type: mongoose_1.Types.ObjectId, ref: 'User', required: true },
+    originalPost: { type: mongoose_1.Types.ObjectId },
     content: {
         image: { type: String, required: false },
         text: { type: String, required: false },
     },
     likesUserId: [{ type: mongoose_1.Types.ObjectId, ref: 'User' }],
-    commentIds: [{ type: mongoose_1.Types.ObjectId, ref: 'Comment' }]
+    commentIds: [{ type: mongoose_1.Types.ObjectId, ref: 'Comment' }],
+    shareIds: [{ type: mongoose_1.Types.ObjectId, ref: 'Post' }],
 }, {
     timestamps: true
 });
