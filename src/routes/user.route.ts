@@ -6,6 +6,7 @@ import { allowedTo } from '../middlewares/allowedTo';
 import { Role } from '../utils/userRole';
 import { pagination } from '../middlewares/pagination.middleware';
 import { verifyToken } from '../middlewares/verifyToken';
+import { isValidUser } from '../middlewares/isValid';
 
 const userRouter = Router()
 
@@ -14,7 +15,7 @@ userRouter.route('/signup')
 
 
 userRouter.route('/login')
-            .post(loginValidation, validationMiddleware, userController.postLogin)
+            .post(loginValidation, validationMiddleware, isValidUser, userController.postLogin)
 
 //getting all users for admin 
 userRouter.route('/users')

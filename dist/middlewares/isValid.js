@@ -12,12 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isValidComment = exports.isValidPost = void 0;
-const mongoose_1 = require("mongoose");
-const post_service_1 = require("../services/post.service");
+exports.isValidUser = exports.isValidComment = exports.isValidPost = void 0;
 const asyncWrapper_middleware_1 = __importDefault(require("./asyncWrapper.middleware"));
 const api_error_1 = __importDefault(require("../errors/api.error"));
+const mongoose_1 = require("mongoose");
 const comment_service_1 = require("../services/comment.service");
+const post_service_1 = require("../services/post.service");
+const user_service_1 = require("../services/user.service");
 exports.isValidPost = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield (0, post_service_1.getPost)(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
@@ -26,9 +27,16 @@ exports.isValidPost = (0, asyncWrapper_middleware_1.default)((req, res, next) =>
     next();
 }));
 exports.isValidComment = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    let comment = yield (0, comment_service_1.getCommentById)(new mongoose_1.Types.ObjectId(req.params.commentId));
+    const comment = yield (0, comment_service_1.getCommentById)(new mongoose_1.Types.ObjectId(req.params.commentId));
     if (!comment)
         throw new api_error_1.default('This id has no available comment', 404, req.path, { id: req.params.commentId });
     req.comment = comment;
+    next();
+}));
+exports.isValidUser = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    let user = yield (0, user_service_1.getUser)(req.body.email);
+    if (!user)
+        throw new api_error_1.default('This email is not in database', 409, req.path, { data: null });
+    req.user = user;
     next();
 }));

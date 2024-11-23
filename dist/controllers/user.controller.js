@@ -53,9 +53,7 @@ exports.postSignUp = (0, asyncWrapper_middleware_1.default)((req, res) => __awai
     });
 }));
 exports.postLogin = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let user = yield userServices.getUser(req.body.email);
-    if (!user)
-        throw new api_error_1.default('This email is not in database', 409, req.path, { data: null });
+    const user = req.user;
     const correctPass = yield userServices.correctPassword(req.body.password, user);
     if (!correctPass)
         throw new api_error_1.default("Password isn't correct", 400, req.path);
@@ -83,13 +81,11 @@ const ObjectId = mongoose_1.Types.ObjectId;
 exports.getUserPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const limit = Number(req.query.limit);
     const skip = Number(req.query.skip);
-    if (req.currentUser) {
-        const posts = yield postServices.getUserPosts(limit, skip, new ObjectId(req.params.userId));
-        res.status(200).json({
-            status: httpStatusText_1.SUCCESS,
-            data: { posts }
-        });
-    }
+    const posts = yield postServices.getUserPosts(limit, skip, new ObjectId(req.params.userId));
+    res.status(200).json({
+        status: httpStatusText_1.SUCCESS,
+        data: { posts }
+    });
 }));
 exports.getMyPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const limit = Number(req.query.limit);

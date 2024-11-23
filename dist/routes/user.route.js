@@ -34,11 +34,12 @@ const allowedTo_1 = require("../middlewares/allowedTo");
 const userRole_1 = require("../utils/userRole");
 const pagination_middleware_1 = require("../middlewares/pagination.middleware");
 const verifyToken_1 = require("../middlewares/verifyToken");
+const isValid_1 = require("../middlewares/isValid");
 const userRouter = (0, express_1.Router)();
 userRouter.route('/signup')
     .post(user_validator_1.signUpValidation, validation_middleware_1.default, userController.postSignUp);
 userRouter.route('/login')
-    .post(user_validator_1.loginValidation, validation_middleware_1.default, userController.postLogin);
+    .post(user_validator_1.loginValidation, validation_middleware_1.default, isValid_1.isValidUser, userController.postLogin);
 //getting all users for admin 
 userRouter.route('/users')
     .get(verifyToken_1.verifyToken, (0, allowedTo_1.allowedTo)([userRole_1.Role.ADMIN]), pagination_middleware_1.pagination, userController.getAllUsers);

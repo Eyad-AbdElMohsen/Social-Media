@@ -3,7 +3,7 @@ import ApiError from "../errors/api.error";
 import asyncWrapper from "../middlewares/asyncWrapper.middleware";
 import * as userServices from '../services/user.service'
 import { SUCCESS } from "../utils/httpStatusText";
-import { CustomRequest } from "../middlewares/verifyToken";
+import { CustomRequest } from "../utils/customRequest";
 import * as postServices from '../services/post.service'
 import { Types } from "mongoose";
 
@@ -18,9 +18,8 @@ export const postSignUp = asyncWrapper( async(req: Request, res: Response) => {
     })
 })
 
-export const postLogin = asyncWrapper( async(req: Request, res: Response) => {
-    let user = await userServices.getUser(req.body.email)
-    if(!user) throw new ApiError('This email is not in database', 409, req.path, {data: null})
+export const postLogin = asyncWrapper( async(req: CustomRequest, res: Response) => {
+    const user = req.user!
     const correctPass: boolean = await userServices.correctPassword(req.body.password, user)
     if(!correctPass) throw new ApiError("Password isn't correct" ,  400, req.path)
     const token = await userServices.login(user)
@@ -51,13 +50,11 @@ const ObjectId = Types.ObjectId
 export const getUserPosts = asyncWrapper (async(req: CustomRequest, res: Response) => {
     const limit: number = Number(req.query.limit);
     const skip: number = Number(req.query.skip);
-    if(req.currentUser){
-        const posts = await postServices.getUserPosts(limit, skip, new ObjectId(req.params.userId))
-        res.status(200).json({
-            status: SUCCESS,
-            data: {posts}
-        })
-    }
+    const posts = await postServices.getUserPosts(limit, skip, new ObjectId(req.params.userId))
+    res.status(200).json({
+        status: SUCCESS,
+        data: {posts}
+    })
 })
 
 export const getMyPosts = asyncWrapper (async(req: CustomRequest, res:Response) => {

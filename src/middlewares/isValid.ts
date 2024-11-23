@@ -1,10 +1,11 @@
-import { Types } from "mongoose";
-import { getPost } from "../services/post.service";
-import asyncWrapper from "./asyncWrapper.middleware";
 import { Request, Response, NextFunction } from "express";
+import asyncWrapper from "./asyncWrapper.middleware";
 import ApiError from "../errors/api.error";
-import { getCommentById } from "../services/comment.service";
 import { CustomRequest } from "../utils/customRequest";
+import { Types } from "mongoose";
+import { getCommentById } from "../services/comment.service";
+import { getPost } from "../services/post.service";
+import { getUser } from "../services/user.service";
 
 
 export const isValidPost = asyncWrapper(async(req: CustomRequest, res: Response, next: NextFunction) => {
@@ -15,8 +16,15 @@ export const isValidPost = asyncWrapper(async(req: CustomRequest, res: Response,
 })
 
 export const isValidComment = asyncWrapper(async(req: CustomRequest, res: Response, next: NextFunction) => {
-    let comment = await getCommentById(new Types.ObjectId(req.params.commentId))
+    const comment = await getCommentById(new Types.ObjectId(req.params.commentId))
     if(!comment) throw new ApiError('This id has no available comment', 404, req.path, {id: req.params.commentId})
     req.comment = comment
+    next()
+})
+
+export const isValidUser = asyncWrapper(async(req: CustomRequest, res: Response, next: NextFunction) => {
+    let user = await getUser(req.body.email)
+    if(!user) throw new ApiError('This email is not in database', 409, req.path, {data: null})
+    req.user = user
     next()
 })
