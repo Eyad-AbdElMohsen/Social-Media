@@ -1,5 +1,6 @@
 import mongoose, { Model, Schema, Document, ObjectId, Types } from "mongoose"
 import dotenv from 'dotenv'
+import ApiError from "../errors/api.error"
 
 dotenv.config()
 
@@ -20,6 +21,13 @@ export const commentSchema: Schema = new mongoose.Schema({
 }, {
     timestamps: true
 })
+
+commentSchema.pre<IComment>('save', function(next) {
+    if (!this.content.text && !this.content.image) {
+        throw new ApiError('user should add message or image or both', 400)
+    }
+    next();
+});
 
 export interface IComment extends Document {
     userId: ObjectId,

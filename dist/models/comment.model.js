@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Comment = exports.commentSchema = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const api_error_1 = __importDefault(require("../errors/api.error"));
 dotenv_1.default.config();
 const DB_URL = process.env.DB_URL;
 if (typeof DB_URL == 'string')
@@ -21,5 +22,11 @@ exports.commentSchema = new mongoose_1.default.Schema({
     replyIds: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Comment' }],
 }, {
     timestamps: true
+});
+exports.commentSchema.pre('save', function (next) {
+    if (!this.content.text && !this.content.image) {
+        throw new api_error_1.default('user should add message or image or both', 400);
+    }
+    next();
 });
 exports.Comment = mongoose_1.default.model('Comment', exports.commentSchema);

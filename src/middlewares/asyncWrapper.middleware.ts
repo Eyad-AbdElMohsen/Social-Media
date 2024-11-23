@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
-type asyncFn = (req: Request, res: Response, next: NextFunction) => Promise<any> 
+type asyncFn<R> = (req: Request, res: Response, next: NextFunction) => Promise<R> 
 
-const asyncWrapper = (asyncFn: asyncFn) => {
+const asyncWrapper = <R>(asyncFn: asyncFn<R>) => {
     return ( req: Request, res: Response, next: NextFunction) => {
         asyncFn(req, res, next).catch((err) => {
             next(err)

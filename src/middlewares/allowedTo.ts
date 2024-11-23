@@ -5,6 +5,6 @@ import ApiError from '../errors/api.error';
 
 export const allowedTo = (roles: Role[]) => {
     return (req: CustomRequest, res: Response, next: NextFunction) => {
-    if(roles.includes(req.currentUser!.role))next()
-    else throw new ApiError('You are not allowed to this action', 401)
+        if(roles.includes(req.currentUser!.role))next()
+        else throw new ApiError('You are not allowed to this action', 401)
 }}

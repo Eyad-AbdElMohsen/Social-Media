@@ -5,7 +5,7 @@ import userRouter from "./routes/user.route";
 import errorMiddleware from "./middlewares/error.middleware";
 import notFoundMiddleware from "./middlewares/notFound.middleware";
 import postRouter from "./routes/post.route";
-
+import cors from 'cors'
 
 dotenv.config()
 
@@ -17,6 +17,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 
 app.use(express.json())
+app.use(cors())
 
 app.get("/",(req: Request ,res: Response) =>{
     res.send("Hello from ts express");

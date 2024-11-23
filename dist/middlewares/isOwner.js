@@ -42,7 +42,7 @@ const api_error_1 = __importDefault(require("../errors/api.error"));
 const asyncWrapper_middleware_1 = __importDefault(require("./asyncWrapper.middleware"));
 const mongoose_1 = require("mongoose");
 exports.isPostOwner = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const post = yield postServices.getPost(req.params.postId);
+    const post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post) {
         throw new api_error_1.default('this id has no available posts', 404);
     }

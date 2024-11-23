@@ -10,11 +10,13 @@ const user_route_1 = __importDefault(require("./routes/user.route"));
 const error_middleware_1 = __importDefault(require("./middlewares/error.middleware"));
 const notFound_middleware_1 = __importDefault(require("./middlewares/notFound.middleware"));
 const post_route_1 = __importDefault(require("./routes/post.route"));
+const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
 const port = process.env.port || 8000;
 const app = (0, express_1.default)();
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, '../uploads')));
 app.use(express_1.default.json());
+app.use((0, cors_1.default)());
 app.get("/", (req, res) => {
     res.send("Hello from ts express");
 });

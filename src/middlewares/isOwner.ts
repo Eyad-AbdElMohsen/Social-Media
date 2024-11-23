@@ -8,7 +8,7 @@ import { Types } from 'mongoose';
 
 
 export const isPostOwner = asyncWrapper(async(req: CustomRequest, res: Response, next: NextFunction) => {
-    const post = await postServices.getPost(req.params.postId)
+    const post = await postServices.getPost(new Types.ObjectId(req.params.postId))
     if(!post){
         throw new ApiError('this id has no available posts', 404)
     }
