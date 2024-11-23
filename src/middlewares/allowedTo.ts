@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { Role } from "../utils/userRole";
-import {CustomRequest} from "../middlewares/verifyToken";
+import {CustomRequest} from "../utils/customRequest";
 import ApiError from '../errors/api.error';
 
 export const allowedTo = (roles: Role[]) => {

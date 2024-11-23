@@ -1,7 +1,7 @@
 import {  Response, NextFunction } from 'express';
 import * as postServices from '../services/post.service'
 import * as commentService from '../services/comment.service'
-import { CustomRequest } from './verifyToken';
+import { CustomRequest } from '../utils/customRequest';
 import ApiError from '../errors/api.error';
 import asyncWrapper from './asyncWrapper.middleware';
 import { Types } from 'mongoose';
