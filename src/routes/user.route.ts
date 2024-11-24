@@ -28,13 +28,13 @@ userRouter.route('/users/me/posts')
             .get(verifyToken, pagination, userController.getMyPosts)
 
 userRouter.route('/users/:userId/posts')
-            .get(verifyToken, isValidUser, isIFriendOfUser, pagination, userController.getUserPosts)
+            .get(verifyToken, getMyUser, isValidUser, isIFriendOfUser, pagination, userController.getUserPosts)
 
 userRouter.route('/users/me/friends')
             .get(verifyToken, getMyUser, pagination, userController.getMyFriends)
 
 userRouter.route('/users/:userId/friends')
-            .get(verifyToken, isValidUser, isIFriendOfUser, pagination, userController.getUserFriends)
+            .get(verifyToken, getMyUser, isValidUser, isIFriendOfUser, pagination, userController.getUserFriends)
 
 
 
