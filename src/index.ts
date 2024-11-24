@@ -8,6 +8,7 @@ import postRouter from "./routes/post.route";
 import userRouter from "./routes/user.route";
 import friendRouter  from "./routes/friend.route";
 import cors from 'cors'
+import morgan from 'morgan';
 
 
 
@@ -18,10 +19,20 @@ const app : Express = express();
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-
+app.use(morgan('dev')); 
 app.use(express.json())
 app.use(cors())
 
+app.use(
+    morgan((tokens, req, res) => {
+        return [
+            tokens.method(req, res),
+            tokens.url(req, res),
+            tokens.status(req, res),
+            tokens['response-time'](req, res), 'ms'
+        ].join(' ');
+    })
+);
 
 app.get("/",(req: Request ,res: Response) =>{
     res.send("Hello from ts express");

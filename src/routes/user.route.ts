@@ -8,6 +8,7 @@ import { pagination } from '../middlewares/pagination.middleware';
 import { verifyToken } from '../middlewares/verifyToken';
 import { isValidUser, isValidEmail } from '../middlewares/isValid';
 import  getMyUser  from '../middlewares/getMe'
+import { isIFriendOfUser } from '../middlewares/isIFrend';
 
 const userRouter = Router()
 
@@ -27,13 +28,13 @@ userRouter.route('/users/me/posts')
             .get(verifyToken, pagination, userController.getMyPosts)
 
 userRouter.route('/users/:userId/posts')
-            .get(verifyToken, isValidUser, pagination, userController.getUserPosts)
+            .get(verifyToken, isValidUser, isIFriendOfUser, pagination, userController.getUserPosts)
 
 userRouter.route('/users/me/friends')
             .get(verifyToken, getMyUser, pagination, userController.getMyFriends)
 
 userRouter.route('/users/:userId/friends')
-            .get(verifyToken, isValidUser, pagination, userController.getUserFriends)
+            .get(verifyToken, isValidUser, isIFriendOfUser, pagination, userController.getUserFriends)
 
 
 

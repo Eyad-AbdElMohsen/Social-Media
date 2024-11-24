@@ -36,6 +36,7 @@ const pagination_middleware_1 = require("../middlewares/pagination.middleware");
 const verifyToken_1 = require("../middlewares/verifyToken");
 const isValid_1 = require("../middlewares/isValid");
 const getMe_1 = __importDefault(require("../middlewares/getMe"));
+const isIFrend_1 = require("../middlewares/isIFrend");
 const userRouter = (0, express_1.Router)();
 userRouter.route('/signup')
     .post(user_validator_1.signUpValidation, validation_middleware_1.default, userController.postSignUp);
@@ -47,9 +48,9 @@ userRouter.route('/users')
 userRouter.route('/users/me/posts')
     .get(verifyToken_1.verifyToken, pagination_middleware_1.pagination, userController.getMyPosts);
 userRouter.route('/users/:userId/posts')
-    .get(verifyToken_1.verifyToken, isValid_1.isValidUser, pagination_middleware_1.pagination, userController.getUserPosts);
+    .get(verifyToken_1.verifyToken, isValid_1.isValidUser, isIFrend_1.isIFriendOfUser, pagination_middleware_1.pagination, userController.getUserPosts);
 userRouter.route('/users/me/friends')
     .get(verifyToken_1.verifyToken, getMe_1.default, pagination_middleware_1.pagination, userController.getMyFriends);
 userRouter.route('/users/:userId/friends')
-    .get(verifyToken_1.verifyToken, isValid_1.isValidUser, pagination_middleware_1.pagination, userController.getUserFriends);
+    .get(verifyToken_1.verifyToken, isValid_1.isValidUser, isIFrend_1.isIFriendOfUser, pagination_middleware_1.pagination, userController.getUserFriends);
 exports.default = userRouter;

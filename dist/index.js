@@ -13,11 +13,21 @@ const post_route_1 = __importDefault(require("./routes/post.route"));
 const user_route_1 = __importDefault(require("./routes/user.route"));
 const friend_route_1 = __importDefault(require("./routes/friend.route"));
 const cors_1 = __importDefault(require("cors"));
+const morgan_1 = __importDefault(require("morgan"));
 const port = process.env.PORT || 8000;
 const app = (0, express_1.default)();
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, '../uploads')));
+app.use((0, morgan_1.default)('dev'));
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
+app.use((0, morgan_1.default)((tokens, req, res) => {
+    return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens['response-time'](req, res), 'ms'
+    ].join(' ');
+}));
 app.get("/", (req, res) => {
     res.send("Hello from ts express");
 });

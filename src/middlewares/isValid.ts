@@ -8,9 +8,15 @@ import { getPost } from "../services/post.service";
 import { getUserByEmail, getUserById } from "../services/user.service";
 
 
+
 export const isValidPost = asyncWrapper(async(req: CustomRequest, res: Response, next: NextFunction) => {
     const post = await getPost(new Types.ObjectId(req.params.postId))
     if(!post) throw new ApiError('This id has no available post', 404, req.path, {id: req.params.postId})
+    const strUserId = post.userId.toString()
+    const userId = new Types.ObjectId(strUserId)
+    const user = await getUserById(userId) 
+    if(!user) throw new ApiError('This email is not in database', 409, req.path, {data: null})
+    req.user = user
     req.post = post
     next()
 })
