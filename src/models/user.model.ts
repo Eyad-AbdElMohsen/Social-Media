@@ -1,4 +1,4 @@
-import mongoose, { Model, Schema, Document, ObjectId } from "mongoose"
+import mongoose, { Model, Schema, Document, ObjectId, Types } from "mongoose"
 import dotenv from 'dotenv'
 import { Role } from "../utils/userRole"
 
@@ -16,7 +16,10 @@ const userSchema: Schema = new mongoose.Schema({
     email: {type: String, required: true},
     password: {type: String, required: true},
     confirmPassword: {type: String, required: true},
-    role: {type: String, exum: [Role.ADMIN, Role.USER], default: Role.USER}
+    role: {type: String, exum: [Role.ADMIN, Role.USER], default: Role.USER},
+    friendIds: [{type: Types.ObjectId, ref: 'User'}],
+    sentRequestsList: [{type: Types.ObjectId, ref: 'User'}],
+    receivedRequestsList: [{type: Types.ObjectId, ref: 'User'}],
 })
 
 export interface IUser extends Document { 
@@ -25,8 +28,11 @@ export interface IUser extends Document {
     password: string, 
     confirmPassword: string,
     role: Role,
-    _id: ObjectId
+    _id: ObjectId,
     token?: string,
+    friendIds: ObjectId[],
+    sentRequestsList: ObjectId[],
+    receivedRequestsList: ObjectId[]
 }
 
 export interface CreateUserData { 

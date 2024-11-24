@@ -22,7 +22,6 @@ export const getAllPosts = async(limit: number, skip: number) => {
 
 
 export const getUserPosts = async(limit: number, skip: number, userId: Types.ObjectId | Schema.Types.ObjectId)=> {
-    console.log(userId)
     const posts = await Post.find({userId}, {'__v': false}).limit(limit).skip(skip)
     return posts
 }

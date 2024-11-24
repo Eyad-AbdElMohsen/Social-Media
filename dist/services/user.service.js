@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.correctPassword = exports.postSignup = exports.getUser = exports.getAllUsers = void 0;
+exports.login = exports.correctPassword = exports.postSignup = exports.getMe = exports.getUserById = exports.getUserByEmail = exports.getAllUsers = void 0;
 const user_model_1 = require("../models/user.model");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const generateJWT_1 = require("../utils/generateJWT");
@@ -21,11 +21,23 @@ const getAllUsers = (limit, skip) => __awaiter(void 0, void 0, void 0, function*
     return users;
 });
 exports.getAllUsers = getAllUsers;
-const getUser = (email) => __awaiter(void 0, void 0, void 0, function* () {
+const getUserByEmail = (email) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.findOne({ email });
     return user;
 });
-exports.getUser = getUser;
+exports.getUserByEmail = getUserByEmail;
+const getUserById = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findById(userId);
+    return user;
+});
+exports.getUserById = getUserById;
+const getMe = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.User.findById(userId);
+    if (!user)
+        throw new Error();
+    return user;
+});
+exports.getMe = getMe;
 const postSignup = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield bcrypt_1.default.hash(data.password, 10);
     const newUser = new user_model_1.User(Object.assign(Object.assign({}, data), { password: hashedPassword, confirmPassword: hashedPassword }));

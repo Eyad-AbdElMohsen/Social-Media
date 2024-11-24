@@ -8,7 +8,7 @@ export const getPostLikes = (post: IPost) =>{
 }
 
 export const getNumberOfLikes = (post: IPost) =>{
-    let numberOfLikes: number = post.likesUserId.length
+    let numberOfLikes = post.likesUserId.length
     return numberOfLikes
 }
 

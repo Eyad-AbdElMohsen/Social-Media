@@ -14,6 +14,7 @@ export const generateJWT = async(payload: JwtPayload) => {
         )
         return token
     }else{
+        console.log('pp')
         throw new Error('the secretKey is required')
     }
 }

@@ -35,15 +35,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMyPosts = exports.getUserPosts = exports.getAllUsers = exports.postLogin = exports.postSignUp = void 0;
+exports.getUserFriends = exports.getMyFriends = exports.getMyPosts = exports.getUserPosts = exports.getAllUsers = exports.postLogin = exports.postSignUp = void 0;
 const api_error_1 = __importDefault(require("../errors/api.error"));
 const asyncWrapper_middleware_1 = __importDefault(require("../middlewares/asyncWrapper.middleware"));
-const userServices = __importStar(require("../services/user.service"));
 const httpStatusText_1 = require("../utils/httpStatusText");
-const postServices = __importStar(require("../services/post.service"));
 const mongoose_1 = require("mongoose");
+const userServices = __importStar(require("../services/user.service"));
+const postServices = __importStar(require("../services/post.service"));
+const friendServices = __importStar(require("../services/friends.service"));
 exports.postSignUp = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield userServices.getUser(req.body.email);
+    const user = yield userServices.getUserByEmail(req.body.email);
     if (user)
         throw new api_error_1.default('This email is already exists', 409, req.path, user);
     const newUser = yield userServices.postSignup(req.body);
@@ -94,5 +95,23 @@ exports.getMyPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __awai
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
         data: { posts }
+    });
+}));
+exports.getMyFriends = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const limit = Number(req.query.limit);
+    const skip = Number(req.query.skip);
+    const friends = yield friendServices.getUserFriends(limit, skip, req.me);
+    res.status(200).json({
+        status: httpStatusText_1.SUCCESS,
+        data: { friends }
+    });
+}));
+exports.getUserFriends = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const limit = Number(req.query.limit);
+    const skip = Number(req.query.skip);
+    const friends = yield friendServices.getUserFriends(limit, skip, req.user);
+    res.status(200).json({
+        status: httpStatusText_1.SUCCESS,
+        data: { friends }
     });
 }));

@@ -12,19 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateJWT = exports.secretKey = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-exports.secretKey = process.env.JWT_SECRET;
-const generateJWT = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    if (exports.secretKey) {
-        const token = jsonwebtoken_1.default.sign(payload, 
-        // in terminal -> require('crypto').randomBytes(32).toString('hex') 
-        exports.secretKey, { expiresIn: '1h' });
-        return token;
-    }
-    else {
-        console.log('pp');
-        throw new Error('the secretKey is required');
-    }
-});
-exports.generateJWT = generateJWT;
+const asyncWrapper_middleware_1 = __importDefault(require("./asyncWrapper.middleware"));
+const user_service_1 = require("../services/user.service");
+const getMyUser = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    let me = yield (0, user_service_1.getMe)(req.currentUser.id);
+    req.me = me;
+    next();
+}));
+exports.default = getMyUser;

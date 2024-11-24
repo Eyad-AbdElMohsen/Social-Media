@@ -30,7 +30,6 @@ const getAllPosts = (limit, skip) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.getAllPosts = getAllPosts;
 const getUserPosts = (limit, skip, userId) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(userId);
     const posts = yield post_model_1.Post.find({ userId }, { '__v': false }).limit(limit).skip(skip);
     return posts;
 });

@@ -6,5 +6,6 @@ export interface CustomRequest extends Request {
     currentUser?: JwtPayload,
     post?: IPost,
     comment?: IComment,
-    user?: IUser
+    user?: IUser,
+    me?: IUser
 }

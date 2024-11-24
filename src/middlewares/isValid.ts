@@ -5,7 +5,7 @@ import { CustomRequest } from "../utils/customRequest";
 import { Types } from "mongoose";
 import { getCommentById } from "../services/comment.service";
 import { getPost } from "../services/post.service";
-import { getUser } from "../services/user.service";
+import { getUserByEmail, getUserById } from "../services/user.service";
 
 
 export const isValidPost = asyncWrapper(async(req: CustomRequest, res: Response, next: NextFunction) => {
@@ -22,8 +22,15 @@ export const isValidComment = asyncWrapper(async(req: CustomRequest, res: Respon
     next()
 })
 
+export const isValidEmail = asyncWrapper(async(req: CustomRequest, res: Response, next: NextFunction) => {
+    let user = await getUserByEmail(req.body.email)
+    if(!user) throw new ApiError('This email is not in database', 409, req.path, {data: null})
+    req.user = user
+    next()
+})
+
 export const isValidUser = asyncWrapper(async(req: CustomRequest, res: Response, next: NextFunction) => {
-    let user = await getUser(req.body.email)
+    let user = await getUserById(new Types.ObjectId(req.params.userId))
     if(!user) throw new ApiError('This email is not in database', 409, req.path, {data: null})
     req.user = user
     next()
