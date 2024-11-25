@@ -17,7 +17,7 @@ const api_error_1 = __importDefault(require("../errors/api.error"));
 const post_model_1 = require("../models/post.model");
 const getPostShares = (post) => __awaiter(void 0, void 0, void 0, function* () {
     const shares = yield post.populate('shareIds', { '__v': false });
-    return shares;
+    return shares.shareIds;
 });
 exports.getPostShares = getPostShares;
 const addPostShare = (post, data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -32,7 +32,7 @@ const addPostShare = (post, data) => __awaiter(void 0, void 0, void 0, function*
         },
         originalPost: data.originalPost,
     });
-    yield newShare.populate('userId', { "__v": false, "password": false, "confirmPassword": false });
+    yield newShare.populate('userId', '_id email role');
     yield newShare.save();
     post.shareIds.push(newShare._id);
     yield post.save();

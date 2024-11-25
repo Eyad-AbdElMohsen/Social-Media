@@ -13,7 +13,7 @@ dotenv.config()
 export const verifyToken = asyncWrapper(async(req: CustomRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization
     if(!authHeader){
-        throw new ApiError('token is required', 401, req.path)
+        throw new ApiError('token is required', 401, 'verifyToken.file')
     }
     const token = authHeader.split(' ')[1]
     if(!secretKey){

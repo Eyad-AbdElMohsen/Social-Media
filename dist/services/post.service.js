@@ -12,20 +12,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deletePost = exports.editPost = exports.getPost = exports.getUserPosts = exports.getAllPosts = exports.addPost = void 0;
 const post_model_1 = require("../models/post.model");
 const addPost = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    const newPost = new post_model_1.Post({
+    let newPost = new post_model_1.Post({
         userId: data.userId,
         content: {
             text: data.text,
             image: data.fileName
         }
     });
-    yield newPost.populate('userId', { "__v": false, "password": false, "confirmPassword": false });
     yield newPost.save();
     return newPost;
 });
 exports.addPost = addPost;
 const getAllPosts = (limit, skip) => __awaiter(void 0, void 0, void 0, function* () {
-    const posts = yield post_model_1.Post.find({}, { '__v': false }).limit(limit).skip(skip).populate('userId', { "__v": false, "password": false, "confirmPassword": false });
+    const posts = yield post_model_1.Post.find({}, { '__v': false }).limit(limit).skip(skip).populate('userId', 'email _id role');
     return posts;
 });
 exports.getAllPosts = getAllPosts;

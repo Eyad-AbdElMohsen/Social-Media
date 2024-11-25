@@ -18,7 +18,7 @@ const api_error_1 = __importDefault(require("../errors/api.error"));
 const validationMiddleware = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const errors = (0, express_validator_1.validationResult)(req);
     if (!errors.isEmpty()) {
-        throw new api_error_1.default('Validation Error', 400, req.path, errors.array());
+        throw new api_error_1.default('Validation Error', 400, 'validatio.middleware file', errors.array());
     }
     next();
 }));

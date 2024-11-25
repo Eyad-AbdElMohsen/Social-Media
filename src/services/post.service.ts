@@ -3,20 +3,19 @@ import { Post, AddPostBody, UpdatePostBody, IPost } from "../models/post.model";
 
 
 export const addPost = async(data : AddPostBody) => {
-    const newPost = new Post({
+    let newPost = new Post({
         userId: data.userId,
         content: {
             text: data.text,
             image: data.fileName
         }
     })
-    await newPost.populate('userId', {"__v": false, "password": false, "confirmPassword": false})
-    await newPost.save()
+    await newPost.save() 
     return newPost
 }
 
 export const getAllPosts = async(limit: number, skip: number) => {
-    const posts = await Post.find({}, {'__v': false}).limit(limit).skip(skip).populate('userId', {"__v": false, "password": false, "confirmPassword": false})
+    const posts = await Post.find({}, {'__v': false}).limit(limit).skip(skip).populate('userId', 'email _id role')
     return posts
 }
 

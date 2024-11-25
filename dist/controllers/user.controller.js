@@ -46,24 +46,32 @@ const friendServices = __importStar(require("../services/friends.service"));
 exports.postSignUp = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield userServices.getUserByEmail(req.body.email);
     if (user)
-        throw new api_error_1.default('This email is already exists', 409, req.path, user);
+        throw new api_error_1.default('This email is already exists', 409, 'postSignUp middleware in user controller file', user);
     const newUser = yield userServices.postSignup(req.body);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
-        data: { newUser }
+        data: {
+            newUser: {
+                _id: newUser._id,
+                name: newUser.name,
+                email: newUser.email,
+                role: newUser.role,
+            },
+        },
     });
 }));
 exports.postLogin = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     const correctPass = yield userServices.correctPassword(req.body.password, user);
     if (!correctPass)
-        throw new api_error_1.default("Password isn't correct", 400, req.path);
+        throw new api_error_1.default("Password isn't correct", 400, 'postLogin middleware in user controller file');
     const token = yield userServices.login(user);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
         data: {
+            _id: user._id,
+            name: user.name,
             email: user.email,
-            Name: user.name,
             role: user.role,
             token: token
         }
@@ -75,7 +83,12 @@ exports.getAllUsers = (0, asyncWrapper_middleware_1.default)((req, res) => __awa
     const users = yield userServices.getAllUsers(limit, skip);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
-        data: { users }
+        data: users.map(user => ({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+        })),
     });
 }));
 const ObjectId = mongoose_1.Types.ObjectId;
@@ -85,7 +98,10 @@ exports.getUserPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __aw
     const posts = yield postServices.getUserPosts(limit, skip, new ObjectId(req.params.userId));
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
-        data: { posts }
+        data: posts.map((post, index) => ({
+            postNumber: index + 1,
+            post: post
+        })),
     });
 }));
 exports.getMyPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -94,7 +110,10 @@ exports.getMyPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __awai
     const posts = yield postServices.getUserPosts(limit, skip, req.currentUser.id);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
-        data: { posts }
+        data: posts.map((post, index) => ({
+            postNumber: index + 1,
+            post: post
+        })),
     });
 }));
 exports.getMyFriends = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -103,7 +122,10 @@ exports.getMyFriends = (0, asyncWrapper_middleware_1.default)((req, res) => __aw
     const friends = yield friendServices.getUserFriends(limit, skip, req.me);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
-        data: { friends }
+        data: friends.map((friend, index) => ({
+            friendNumber: index + 1,
+            friend: friend
+        })),
     });
 }));
 exports.getUserFriends = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -112,6 +134,9 @@ exports.getUserFriends = (0, asyncWrapper_middleware_1.default)((req, res) => __
     const friends = yield friendServices.getUserFriends(limit, skip, req.user);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
-        data: { friends }
+        data: friends.map((friend, index) => ({
+            friendNumber: index + 1,
+            friend: friend
+        })),
     });
 }));

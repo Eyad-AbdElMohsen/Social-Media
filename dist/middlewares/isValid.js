@@ -22,12 +22,12 @@ const user_service_1 = require("../services/user.service");
 exports.isValidPost = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield (0, post_service_1.getPost)(new mongoose_1.Types.ObjectId(req.params.postId));
     if (!post)
-        throw new api_error_1.default('This id has no available post', 404, req.path, { id: req.params.postId });
+        throw new api_error_1.default('This id has no available post', 404, 'isValid file . isValidPost function', { id: req.params.postId });
     const strUserId = post.userId.toString();
     const userId = new mongoose_1.Types.ObjectId(strUserId);
     const user = yield (0, user_service_1.getUserById)(userId);
     if (!user)
-        throw new api_error_1.default('This email is not in database', 409, req.path, { data: null });
+        throw new api_error_1.default('This email is not in database', 409, 'isValid file . isValidUser function', { data: null });
     req.user = user;
     req.post = post;
     next();
@@ -35,21 +35,21 @@ exports.isValidPost = (0, asyncWrapper_middleware_1.default)((req, res, next) =>
 exports.isValidComment = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const comment = yield (0, comment_service_1.getCommentById)(new mongoose_1.Types.ObjectId(req.params.commentId));
     if (!comment)
-        throw new api_error_1.default('This id has no available comment', 404, req.path, { id: req.params.commentId });
+        throw new api_error_1.default('This id has no available comment', 404, 'isValid file . isValidComment function', { id: req.params.commentId });
     req.comment = comment;
     next();
 }));
 exports.isValidEmail = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let user = yield (0, user_service_1.getUserByEmail)(req.body.email);
     if (!user)
-        throw new api_error_1.default('This email is not in database', 409, req.path, { data: null });
+        throw new api_error_1.default('This email is not in database', 409, 'isValid file . isValidEmail function', { data: null });
     req.user = user;
     next();
 }));
 exports.isValidUser = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let user = yield (0, user_service_1.getUserById)(new mongoose_1.Types.ObjectId(req.params.userId));
     if (!user)
-        throw new api_error_1.default('This email is not in database', 409, req.path, { data: null });
+        throw new api_error_1.default('This email is not in database', 409, 'isValid file . isValidUser function', { data: null });
     req.user = user;
     next();
 }));

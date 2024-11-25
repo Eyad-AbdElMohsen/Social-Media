@@ -22,7 +22,7 @@ dotenv_1.default.config();
 exports.verifyToken = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-        throw new api_error_1.default('token is required', 401, req.path);
+        throw new api_error_1.default('token is required', 401, 'verifyToken.file');
     }
     const token = authHeader.split(' ')[1];
     if (!generateJWT_1.secretKey) {

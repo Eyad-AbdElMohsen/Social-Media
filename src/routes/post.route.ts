@@ -34,7 +34,7 @@ postRouter.route('/posts/:postId/comments')
             
 // to delete, edit and get a comment (or a reply)
 postRouter.route('/posts/:postId/comments/:commentId')
-            .get(verifyToken, getMyUser, isValidPost, isIFriendOfUser, postController.getPostComment)
+            .get(verifyToken, getMyUser, isValidPost, isValidComment, isIFriendOfUser, postController.getPostComment)
             .patch(verifyToken, isValidPost, isValidComment, isCommentOwner, upload.single('image'), postController.editPostComment)
             .delete(verifyToken, isValidPost, isValidComment, isCommentOwner, postController.deletePostComment)
 

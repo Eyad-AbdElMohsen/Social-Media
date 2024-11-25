@@ -63,7 +63,16 @@ exports.getAllPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __awa
     const posts = yield postServices.getAllPosts(limit, skip);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
-        data: { posts }
+        data: posts.map((post, index) => ({
+            postNumber: index + 1,
+            post: {
+                _id: post._id,
+                userId: post.userId,
+                content: post.content,
+                createdAt: post.createdAt,
+                updatedAt: post.updatedAt
+            }
+        })),
     });
 }));
 exports.getPost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -109,7 +118,7 @@ exports.likePost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaite
     let userId = req.currentUser.id;
     let isLiked = likeServices.isLiked(req.post, userId);
     if (isLiked)
-        throw new api_error_1.default('This user liked the post before', 409, req.path, { id: req.params.postId });
+        throw new api_error_1.default('This user liked the post before', 409, 'likePost middleware in post controller file', { id: req.params.postId });
     let tryLike = yield likeServices.likePost(userId, req.post);
     if (!tryLike)
         throw new Error('Failed');
@@ -119,7 +128,7 @@ exports.removeLike = (0, asyncWrapper_middleware_1.default)((req, res) => __awai
     let userId = req.currentUser.id;
     let isLiked = likeServices.isLiked(req.post, userId);
     if (!isLiked)
-        throw new api_error_1.default('This user is already not like the post before', 409, req.path, { id: req.params.postId });
+        throw new api_error_1.default('This user is already not like the post before', 409, 'removeLike middleware in post controller file', { id: req.params.postId });
     yield likeServices.removeLike(userId, req.post);
     res.status(200).json({ status: httpStatusText_1.SUCCESS });
 }));
@@ -127,7 +136,10 @@ exports.getPostComments = (0, asyncWrapper_middleware_1.default)((req, res) => _
     let comments = yield commentService.getPostComments(req.post);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
-        data: { comments }
+        data: comments.map((comment, index) => ({
+            commentNumber: index + 1,
+            comment
+        })),
     });
 }));
 exports.getPostComment = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -175,7 +187,10 @@ exports.getCommentReplies = (0, asyncWrapper_middleware_1.default)((req, res) =>
     let replies = yield replyService.getCommentReplies(req.comment);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
-        data: { replies }
+        data: replies.map((reply, index) => ({
+            replyNumber: index + 1,
+            reply,
+        })),
     });
 }));
 exports.addCommentReply = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -195,7 +210,7 @@ exports.addCommentReply = (0, asyncWrapper_middleware_1.default)((req, res) => _
     });
 }));
 exports.getPostShares = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let shares = yield shareService.getPostShares(req.post);
+    const shares = yield shareService.getPostShares(req.post);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
         data: { shares }

@@ -8,11 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addCommentReply = exports.getCommentReplies = void 0;
 const comment_model_1 = require("../models/comment.model");
+const mongoose_1 = __importDefault(require("mongoose"));
 const getCommentReplies = (comment) => __awaiter(void 0, void 0, void 0, function* () {
-    yield comment.populate('replyIds', { '__v': false });
+    yield comment.populate('replyIds', '-__v ');
     return comment.replyIds;
 });
 exports.getCommentReplies = getCommentReplies;
@@ -26,9 +30,13 @@ const addCommentReply = (comment, data) => __awaiter(void 0, void 0, void 0, fun
             image: data.content.fileName
         }
     });
-    yield newReply.save();
+    const session = yield mongoose_1.default.startSession();
+    session.startTransaction();
+    const option = { session };
+    yield newReply.save(option);
     (_a = comment.replyIds) === null || _a === void 0 ? void 0 : _a.push(newReply._id);
-    yield comment.save();
+    yield comment.save(option);
+    session.commitTransaction();
     return newReply;
 });
 exports.addCommentReply = addCommentReply;

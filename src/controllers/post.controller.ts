@@ -29,7 +29,16 @@ export const getAllPosts = asyncWrapper(async(req: Request, res: Response) => {
     const posts = await postServices.getAllPosts(limit, skip)
     res.status(200).json({
         status: SUCCESS,
-        data: {posts}
+        data: posts.map((post, index) => ({
+            postNumber: index + 1,
+            post: {
+                _id: post._id,
+                userId: post.userId,
+                content: post.content,
+                createdAt: post.createdAt,
+                updatedAt: post.updatedAt
+            }
+        })),
     })
 })
 
@@ -78,7 +87,7 @@ export const getPostLikes = asyncWrapper(async(req: CustomRequest, res: Response
 export const likePost = asyncWrapper(async(req: CustomRequest, res: Response) => {
     let userId = req.currentUser!.id
     let isLiked = likeServices.isLiked(req.post!, userId)
-    if(isLiked)throw new ApiError('This user liked the post before', 409, req.path, {id: req.params.postId})
+    if(isLiked)throw new ApiError('This user liked the post before', 409, 'likePost middleware in post controller file', {id: req.params.postId})
     let tryLike = await likeServices.likePost(userId, req.post!)
     if(!tryLike) throw new Error('Failed')
     res.status(200).json({status: SUCCESS})
@@ -87,7 +96,7 @@ export const likePost = asyncWrapper(async(req: CustomRequest, res: Response) =>
 export const removeLike = asyncWrapper(async(req: CustomRequest, res: Response) => {
     let userId = req.currentUser!.id
     let isLiked = likeServices.isLiked(req.post!, userId)
-    if(!isLiked)throw new ApiError('This user is already not like the post before', 409, req.path, {id: req.params.postId})
+    if(!isLiked)throw new ApiError('This user is already not like the post before', 409, 'removeLike middleware in post controller file', {id: req.params.postId})
     await likeServices.removeLike(userId, req.post!)
     res.status(200).json({status: SUCCESS})
 })
@@ -96,7 +105,10 @@ export const getPostComments = asyncWrapper(async(req: CustomRequest, res: Respo
     let comments = await commentService.getPostComments(req.post!)
     res.status(200).json({
         status: SUCCESS,
-        data: {comments}
+        data: comments.map((comment, index) => ({
+            commentNumber: index + 1,
+            comment
+        })),
     })
 })
 
@@ -147,7 +159,10 @@ export const getCommentReplies = asyncWrapper(async(req: CustomRequest, res: Res
     let replies = await replyService.getCommentReplies(req.comment!)
     res.status(200).json({
         status: SUCCESS,
-        data: {replies}
+        data: replies.map((reply, index) => ({
+            replyNumber: index + 1,
+            reply, 
+        })),
     })
 })
 
@@ -169,7 +184,7 @@ export const addCommentReply = asyncWrapper(async(req: CustomRequest, res: Respo
 })
 
 export const getPostShares = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let shares = await shareService.getPostShares(req.post!)
+    const shares = await shareService.getPostShares(req.post!)
     res.status(200).json({
         status: SUCCESS,
         data: {shares}

@@ -6,7 +6,7 @@ import ApiError from "../errors/api.error";
 const validationMiddleware = asyncWrapper(async(req: Request, res: Response, next: NextFunction) =>{
     const errors = validationResult(req)
     if(!errors.isEmpty()){
-        throw new ApiError('Validation Error', 400, req.path, errors.array())
+        throw new ApiError('Validation Error', 400, 'validatio.middleware file', errors.array())
     }
     next()
 })

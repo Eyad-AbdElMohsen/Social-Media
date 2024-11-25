@@ -55,7 +55,7 @@ postRouter.route('/posts/:postId/comments')
     .post(verifyToken_1.verifyToken, getMe_1.default, isValid_1.isValidPost, isIFrend_1.isIFriendOfUser, multer_1.upload.single('image'), postController.addPostComment);
 // to delete, edit and get a comment (or a reply)
 postRouter.route('/posts/:postId/comments/:commentId')
-    .get(verifyToken_1.verifyToken, getMe_1.default, isValid_1.isValidPost, isIFrend_1.isIFriendOfUser, postController.getPostComment)
+    .get(verifyToken_1.verifyToken, getMe_1.default, isValid_1.isValidPost, isValid_1.isValidComment, isIFrend_1.isIFriendOfUser, postController.getPostComment)
     .patch(verifyToken_1.verifyToken, isValid_1.isValidPost, isValid_1.isValidComment, isOwner_1.isCommentOwner, multer_1.upload.single('image'), postController.editPostComment)
     .delete(verifyToken_1.verifyToken, isValid_1.isValidPost, isValid_1.isValidComment, isOwner_1.isCommentOwner, postController.deletePostComment);
 postRouter.route('/posts/:postId/comments/:commentId/replies')
