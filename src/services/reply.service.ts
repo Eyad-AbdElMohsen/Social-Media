@@ -9,6 +9,7 @@ export const getCommentReplies = async(comment: IComment) => {
 export const addCommentReply = async(comment: IComment, data: CommentCreateData) => {
     const newReply = new Comment({
         userId: data.userId,
+        postId: data.postId,
         content: {
             text: data.content.text,
             image: data.content.fileName

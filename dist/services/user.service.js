@@ -41,6 +41,7 @@ exports.getMe = getMe;
 const postSignup = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield bcrypt_1.default.hash(data.password, 10);
     const newUser = new user_model_1.User(Object.assign(Object.assign({}, data), { password: hashedPassword, confirmPassword: hashedPassword }));
+    newUser.friendIds.push(newUser._id);
     yield newUser.save();
     return newUser;
 });

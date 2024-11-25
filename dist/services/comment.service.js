@@ -24,6 +24,7 @@ exports.getCommentById = getCommentById;
 const addPostComment = (post, data) => __awaiter(void 0, void 0, void 0, function* () {
     const newComment = new comment_model_1.Comment({
         userId: data.userId,
+        postId: data.postId,
         content: {
             text: data.content.text,
             image: data.content.fileName

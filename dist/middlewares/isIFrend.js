@@ -18,7 +18,6 @@ const api_error_1 = __importDefault(require("../errors/api.error"));
 exports.isIFriendOfUser = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const me = req.me;
     const user = req.user;
-    console.log(me, user);
     const isFriends = me.friendIds.some(id => id.toString() == user._id.toString());
     if (!isFriends)
         throw new api_error_1.default('You are not friend of this user', 400);

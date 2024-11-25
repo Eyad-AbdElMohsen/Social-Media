@@ -23,7 +23,6 @@ const generateJWT = (payload) => __awaiter(void 0, void 0, void 0, function* () 
         return token;
     }
     else {
-        console.log('pp');
         throw new Error('the secretKey is required');
     }
 });

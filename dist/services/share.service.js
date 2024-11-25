@@ -8,8 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addPostShare = exports.getPostShares = void 0;
+const api_error_1 = __importDefault(require("../errors/api.error"));
 const post_model_1 = require("../models/post.model");
 const getPostShares = (post) => __awaiter(void 0, void 0, void 0, function* () {
     const shares = yield post.populate('shareIds', { '__v': false });
@@ -17,6 +21,9 @@ const getPostShares = (post) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.getPostShares = getPostShares;
 const addPostShare = (post, data) => __awaiter(void 0, void 0, void 0, function* () {
+    const oldPost = yield post_model_1.Post.find({ userId: data.userId, originalPost: data.originalPost });
+    if (oldPost.length)
+        throw new api_error_1.default('You can not share same post twice', 400);
     const newShare = new post_model_1.Post({
         userId: data.userId,
         content: {

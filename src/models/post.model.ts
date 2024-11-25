@@ -34,6 +34,21 @@ postSchema.pre<IPost>('save', function(next) {
     next();
 });
 
+postSchema.pre(['deleteOne', 'deleteMany'], async function (next) {
+    const postId: ObjectId = this.getQuery()['_id'];
+    const post = await Post.findOne({ _id: postId});
+    if(post!.commentIds.length != 0)
+        await mongoose.model('Comment').deleteMany({ _id: { $in: post!.commentIds } });
+    if(post!.shareIds.length != 0){
+        await mongoose.model('Post').deleteMany({ _id: { $in: post!.shareIds } });
+    }
+    await mongoose.model('Post').updateOne(
+        { shareIds: post!._id }, 
+        { $pull: { shareIds: post!._id } } 
+    );
+    next();
+});
+
 export type PostContent = {
     image?: string;
     text? :string, 
@@ -66,3 +81,4 @@ export interface AddShareBody extends AddPostBody{
 
 
 export const Post: Model<IPost> = mongoose.model<IPost>('Post', postSchema);
+

@@ -139,8 +139,10 @@ exports.getPostComment = (0, asyncWrapper_middleware_1.default)((req, res) => __
 }));
 exports.addPostComment = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
+    const postId = new mongoose_1.Types.ObjectId(req.params.postId);
     let newComment = yield commentService.addPostComment(req.post, {
         userId: req.currentUser.id,
+        postId: postId,
         content: {
             text: req.body.text,
             fileName: (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename
@@ -178,8 +180,10 @@ exports.getCommentReplies = (0, asyncWrapper_middleware_1.default)((req, res) =>
 }));
 exports.addCommentReply = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
+    const postId = new mongoose_1.Types.ObjectId(req.params.postId);
     let newReply = yield replyService.addCommentReply(req.comment, {
         userId: req.currentUser.id,
+        postId: postId,
         content: {
             text: req.body.text,
             fileName: (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename
@@ -199,6 +203,8 @@ exports.getPostShares = (0, asyncWrapper_middleware_1.default)((req, res) => __a
 }));
 exports.addPostShare = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
+    if (req.me._id.toString() === req.post.userId.toString())
+        throw new api_error_1.default('You can not share your post', 400);
     const newShare = yield shareService.addPostShare(req.post, {
         userId: req.currentUser.id,
         text: req.body.text,

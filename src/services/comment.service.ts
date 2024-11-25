@@ -16,6 +16,7 @@ export const getCommentById = async(commentId: Types.ObjectId) => {
 export const addPostComment = async(post: IPost, data: CommentCreateData) => {
     const newComment = new Comment({
         userId: data.userId,
+        postId: data.postId,
         content: {
             text: data.content.text,
             image: data.content.fileName

@@ -2,6 +2,7 @@ import { CreateUserData, User, IUser } from "../models/user.model"
 import bcrypt from 'bcrypt'
 import { generateJWT } from "../utils/generateJWT"
 import { Types, ObjectId } from "mongoose"
+import { addToFriendsList } from "../utils/friends"
 
 export const getAllUsers = async(limit: number, skip: number) => {
     const users = await User.find({}, {"__v": false, "password": false, "confirmPassword": false}).limit(limit).skip(skip)
@@ -31,6 +32,7 @@ export const postSignup = async (data: CreateUserData) => {
         password: hashedPassword,
         confirmPassword: hashedPassword
     })
+    newUser.friendIds.push(newUser._id)
     await newUser.save()
     return newUser
 }

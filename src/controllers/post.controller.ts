@@ -109,8 +109,10 @@ export const getPostComment = asyncWrapper(async(req: CustomRequest, res: Respon
 })
 
 export const addPostComment = asyncWrapper(async(req: CustomRequest, res: Response) => {
+    const postId = new Types.ObjectId(req.params.postId)
     let newComment = await commentService.addPostComment(req.post!, {
         userId: req.currentUser!.id, 
+        postId: postId,
         content: {
             text: req.body.text, 
             fileName: req.file?.filename
@@ -151,8 +153,10 @@ export const getCommentReplies = asyncWrapper(async(req: CustomRequest, res: Res
 
 
 export const addCommentReply = asyncWrapper(async(req: CustomRequest, res: Response) => {
+    const postId = new Types.ObjectId(req.params.postId)
     let newReply = await replyService.addCommentReply(req.comment!, {
         userId: req.currentUser!.id, 
+        postId: postId,
         content: {
             text: req.body.text, 
             fileName: req.file?.filename
@@ -173,6 +177,7 @@ export const getPostShares = asyncWrapper(async(req: CustomRequest, res: Respons
 })
 
 export const addPostShare = asyncWrapper(async(req: CustomRequest, res: Response) => {
+    if(req.me!._id.toString() === req.post!.userId.toString())throw new ApiError('You can not share your post', 400)
     const newShare = await shareService.addPostShare(req.post!, {
         userId: req.currentUser!.id, 
         text: req.body.text, 

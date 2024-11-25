@@ -13,11 +13,12 @@ else
 
 export const commentSchema: Schema = new mongoose.Schema({
     userId: {type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true},
+    postId: {type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true},
     content: {
         image: { type: String, required: false },
         text: { type: String, required: false }, 
     },
-    replyIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+    replyIds: [{ type: Types.ObjectId, ref: 'Comment' }],
 }, {
     timestamps: true
 })
@@ -29,19 +30,36 @@ commentSchema.pre<IComment>('save', function(next) {
     next();
 });
 
+commentSchema.pre(['findOneAndDelete', 'deleteOne', 'deleteMany'], async function (next) {
+    const commentIds = this.getQuery();
+    if(!commentIds)next()
+    const comments = await Comment.find(commentIds);
+    for (let comment of comments) {
+        await this.model.deleteMany({ _id: { $in: comment.replyIds! } });
+        // delete replyId from the comment of the reply 
+        await this.model.updateOne(
+            { replyIds: comment._id }, 
+            { $pull: { replyIds: comment._id } } 
+        );
+    }
+    next();
+});
+
 export interface IComment extends Document {
     userId: ObjectId,
+    postId: Types.ObjectId
     content: {
         image?: string,
         text?: string
     };
-    replyIds?: ObjectId[],
+    replyIds: ObjectId[],
     createdAt: Date,
     updatedAt: Date
 }
 
 export interface CommentCreateData {
     userId: ObjectId,
+    postId: Types.ObjectId,
     content: {
         text?: string,
         fileName?: string

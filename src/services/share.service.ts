@@ -1,3 +1,4 @@
+import ApiError from "../errors/api.error";
 import { AddPostBody, AddShareBody, IPost, Post } from "../models/post.model";
 import { ObjectId } from "mongoose";
 
@@ -7,6 +8,8 @@ export const getPostShares = async(post: IPost) => {
 }
 
 export const addPostShare = async(post: IPost, data: AddShareBody) => {
+    const oldPost = await Post.find({userId: data.userId, originalPost: data.originalPost})
+    if(oldPost.length) throw new ApiError('You can not share same post twice', 400)
     const newShare = new Post({
         userId: data.userId,
         content: {

@@ -20,6 +20,7 @@ const addCommentReply = (comment, data) => __awaiter(void 0, void 0, void 0, fun
     var _a;
     const newReply = new comment_model_1.Comment({
         userId: data.userId,
+        postId: data.postId,
         content: {
             text: data.content.text,
             image: data.content.fileName
