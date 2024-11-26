@@ -10,6 +10,7 @@ export const addPost = async(data : AddPostBody) => {
             image: data.fileName
         }
     })
+    console.log(data.fileName)
     await newPost.save() 
     return newPost
 }

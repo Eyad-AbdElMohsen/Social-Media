@@ -19,6 +19,7 @@ const addPost = (data) => __awaiter(void 0, void 0, void 0, function* () {
             image: data.fileName
         }
     });
+    console.log(data.fileName);
     yield newPost.save();
     return newPost;
 });

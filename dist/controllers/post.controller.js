@@ -46,11 +46,12 @@ const httpStatusText_1 = require("../utils/httpStatusText");
 const api_error_1 = __importDefault(require("../errors/api.error"));
 const mongoose_1 = require("mongoose");
 exports.addPost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
+    console.log((_a = req.file) === null || _a === void 0 ? void 0 : _a.filename);
     const newPost = yield postServices.addPost({
         userId: req.currentUser.id,
         text: req.body.text,
-        fileName: (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename
+        fileName: (_b = req.file) === null || _b === void 0 ? void 0 : _b.filename
     });
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,

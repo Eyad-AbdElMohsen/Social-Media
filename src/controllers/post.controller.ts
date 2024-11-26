@@ -12,6 +12,7 @@ import { Types, ObjectId } from "mongoose";
 
 
 export const addPost = asyncWrapper( async(req: CustomRequest, res: Response) => {
+    console.log(req.file?.filename)
     const newPost = await postServices.addPost({
         userId: req.currentUser!.id, 
         text: req.body.text, 
