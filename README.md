@@ -1,4 +1,3 @@
-# Social-Media
 # Social Media API
 
 A RESTful API built with Node.js, Express, and TypeScript to handle user authentication, posts, comments, likes, and friendships for a social media platform.
