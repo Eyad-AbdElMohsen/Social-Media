@@ -1,6 +1,6 @@
 import ApiError from "../errors/api.error";
 import { AddShareBody, IPost, Post } from "../models/post.model";
-import { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 
 export const getPostShares = async(post: IPost) => {
     const shares = await post.populate('shareIds', {'__v': false})
@@ -19,8 +19,12 @@ export const addPostShare = async(post: IPost, data: AddShareBody) => {
         originalPost: data.originalPost,
     })
     await newShare.populate('userId', '_id email role')
-    await newShare.save()
+    const session = await mongoose.startSession()
+    session.startTransaction()
+    const option = { session }
+    await newShare.save(option)
     post.shareIds.push(newShare._id as ObjectId)
-    await post.save()
+    await post.save(option)
+    session.commitTransaction()
     return newShare
 }

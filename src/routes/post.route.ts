@@ -14,8 +14,8 @@ const postRouter = Router()
             
 
 postRouter.route('/posts')
-.get(verifyToken, allowedTo([Role.ADMIN]), pagination, postController.getAllPosts)
-.post(verifyToken, upload.single('image'), postController.addPost)
+            .get(verifyToken, allowedTo([Role.ADMIN]), pagination, postController.getAllPosts)
+            .post(verifyToken, upload.single('image'), postController.addPost)
 
 // to delete, edit and get a post (or a share)
 postRouter.route('/posts/:postId')

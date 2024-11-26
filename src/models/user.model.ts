@@ -42,7 +42,6 @@ export interface CreateUserData {
     confirmPassword: string,
     role: [Role.ADMIN, Role.USER],
     _id: ObjectId
-    token?: string,
 }
 export interface JwtPayload {
     email: string;

@@ -60,12 +60,11 @@ export const getAllUsers = asyncWrapper(async(req: Request, res: Response) => {
     });
 })
 
-const ObjectId = Types.ObjectId
 
 export const getUserPosts = asyncWrapper (async(req: CustomRequest, res: Response) => {
     const limit = Number(req.query.limit);
     const skip = Number(req.query.skip);
-    const posts = await postServices.getUserPosts(limit, skip, new ObjectId(req.params.userId))
+    const posts = await postServices.getUserPosts(limit, skip, new Types.ObjectId(req.params.userId))
     res.status(200).json({
         status: SUCCESS,
         data: posts.map((post, index) => ({

@@ -10,7 +10,7 @@ export const generateJWT = async(payload: JwtPayload) => {
             payload as JwtPayload,
             // in terminal -> require('crypto').randomBytes(32).toString('hex') 
             secretKey,
-            {expiresIn: '1h'}
+            {expiresIn: '5h'}
         )
         return token
     }else{

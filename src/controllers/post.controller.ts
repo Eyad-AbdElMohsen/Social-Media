@@ -12,7 +12,6 @@ import { Types, ObjectId } from "mongoose";
 
 
 export const addPost = asyncWrapper( async(req: CustomRequest, res: Response) => {
-    console.log(req.file?.filename)
     const newPost = await postServices.addPost({
         userId: req.currentUser!.id, 
         text: req.body.text, 
@@ -74,8 +73,8 @@ export const deletePost = asyncWrapper(async(req: CustomRequest, res: Response) 
 })
 
 export const getPostLikes = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let users = likeServices.getPostLikes(req.post!)
-    let numberOfLikes = likeServices.getNumberOfLikes(req.post!)
+    const users = likeServices.getPostLikes(req.post!)
+    const numberOfLikes = likeServices.getNumberOfLikes(req.post!)
     res.status(200).json({
         status: SUCCESS,
         data: {
@@ -86,24 +85,23 @@ export const getPostLikes = asyncWrapper(async(req: CustomRequest, res: Response
 })
 
 export const likePost = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let userId = req.currentUser!.id
-    let isLiked = likeServices.isLiked(req.post!, userId)
+    const userId = req.currentUser!.id
+    const isLiked = likeServices.isLiked(req.post!, userId)
     if(isLiked)throw new ApiError('This user liked the post before', 409, 'likePost middleware in post controller file', {id: req.params.postId})
-    let tryLike = await likeServices.likePost(userId, req.post!)
-    if(!tryLike) throw new Error('Failed')
+    await likeServices.likePost(userId, req.post!)
     res.status(200).json({status: SUCCESS})
 })
 
 export const removeLike = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let userId = req.currentUser!.id
-    let isLiked = likeServices.isLiked(req.post!, userId)
+    const userId = req.currentUser!.id
+    const isLiked = likeServices.isLiked(req.post!, userId)
     if(!isLiked)throw new ApiError('This user is already not like the post before', 409, 'removeLike middleware in post controller file', {id: req.params.postId})
     await likeServices.removeLike(userId, req.post!)
     res.status(200).json({status: SUCCESS})
 })
 
 export const getPostComments = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let comments = await commentService.getPostComments(req.post!)
+    const comments = await commentService.getPostComments(req.post!)
     res.status(200).json({
         status: SUCCESS,
         data: comments.map((comment, index) => ({
@@ -138,7 +136,7 @@ export const addPostComment = asyncWrapper(async(req: CustomRequest, res: Respon
 })
 
 export const editPostComment = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let commentId = new Types.ObjectId(req.params.commentId);
+    const commentId = new Types.ObjectId(req.params.commentId);
     const commentAfterEdit = await commentService.editPostComment({
         userId: req.currentUser!.id, 
         content: {
@@ -151,7 +149,7 @@ export const editPostComment = asyncWrapper(async(req: CustomRequest, res: Respo
 })
 
 export const deletePostComment = asyncWrapper(async(req: CustomRequest, res: Response) => {
-    let commentId = new Types.ObjectId(req.params.commentId);
+    const commentId = new Types.ObjectId(req.params.commentId);
     await commentService.deletePostComment(commentId)
     res.status(200).json({satus: SUCCESS, data: null})
 })
@@ -170,7 +168,7 @@ export const getCommentReplies = asyncWrapper(async(req: CustomRequest, res: Res
 
 export const addCommentReply = asyncWrapper(async(req: CustomRequest, res: Response) => {
     const postId = new Types.ObjectId(req.params.postId)
-    let newReply = await replyService.addCommentReply(req.comment!, {
+    const newReply = await replyService.addCommentReply(req.comment!, {
         userId: req.currentUser!.id, 
         postId: postId,
         content: {

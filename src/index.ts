@@ -9,30 +9,18 @@ import userRouter from "./routes/user.route";
 import friendRouter  from "./routes/friend.route";
 import cors from 'cors'
 
-
-
-
 const port = process.env.PORT || 8000
-
 const app : Express = express();
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
 app.use(express.json())
 app.use(cors())
-
-app.get("/",(req: Request ,res: Response) =>{
-    res.send("Hello from ts express");
-})
 
 app.use(userRouter)
 app.use(postRouter)
 app.use(friendRouter)
-
 // glopal middleware
 app.all('*', notFoundMiddleware)
-
-
 //err handler
 app.use(errorMiddleware)
 

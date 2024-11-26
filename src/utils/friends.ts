@@ -8,8 +8,8 @@ export const addToRequestList = (sender: IUser, recipient: IUser) => {
 }
 
 export const removeFromRequestList = (sender: IUser, recipient: IUser) => {
-    let sentIndex = sender.sentRequestsList.indexOf(recipient._id);
-    let receiveIndex = recipient.receivedRequestsList.indexOf(sender._id);
+    const sentIndex = sender.sentRequestsList.indexOf(recipient._id);
+    const receiveIndex = recipient.receivedRequestsList.indexOf(sender._id);
     sender.sentRequestsList.splice(sentIndex, 1);
     recipient.receivedRequestsList.splice(receiveIndex, 1);
 }
@@ -20,12 +20,13 @@ export const addToFriendsList = (sender: IUser, recipient: IUser) => {
 }
 
 export const removeFromFriendList = (sender: IUser, recipient: IUser) => {
-    let sentIndex = sender.friendIds.indexOf(recipient._id);
-    let receiveIndex = recipient.friendIds.indexOf(sender._id);
+    const sentIndex = sender.friendIds.indexOf(recipient._id);
+    const receiveIndex = recipient.friendIds.indexOf(sender._id);
     sender.friendIds.splice(sentIndex, 1);
     recipient.friendIds.splice(receiveIndex, 1);
 }
 
+// Handles saving sender and recipient data in a transactional manner to ensure ( atomicity )
 export const savingData = async(sender: IUser, recipient: IUser) => {
     const session = await mongoose.startSession()
     session.startTransaction()

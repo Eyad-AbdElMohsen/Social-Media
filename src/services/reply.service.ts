@@ -18,7 +18,7 @@ export const addCommentReply = async(comment: IComment, data: CommentCreateData)
     session.startTransaction()
     const option = { session }
     await newReply.save(option)
-    comment.replyIds?.push(newReply._id as ObjectId)
+    comment.replyIds.push(newReply._id as ObjectId)
     await comment.save(option)
     session.commitTransaction()
     return newReply
