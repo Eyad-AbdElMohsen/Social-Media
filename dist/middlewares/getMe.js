@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const asyncWrapper_middleware_1 = __importDefault(require("./asyncWrapper.middleware"));
 const user_service_1 = require("../services/user.service");
 const getMyUser = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    let me = yield (0, user_service_1.getMe)(req.currentUser.id);
+    const me = yield (0, user_service_1.getMe)(req.currentUser.id);
     req.me = me;
     next();
 }));

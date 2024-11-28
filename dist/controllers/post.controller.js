@@ -46,12 +46,11 @@ const httpStatusText_1 = require("../utils/httpStatusText");
 const api_error_1 = __importDefault(require("../errors/api.error"));
 const mongoose_1 = require("mongoose");
 exports.addPost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    console.log((_a = req.file) === null || _a === void 0 ? void 0 : _a.filename);
+    var _a;
     const newPost = yield postServices.addPost({
         userId: req.currentUser.id,
         text: req.body.text,
-        fileName: (_b = req.file) === null || _b === void 0 ? void 0 : _b.filename
+        fileName: (_a = req.file) === null || _a === void 0 ? void 0 : _a.filename
     });
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
@@ -105,8 +104,8 @@ exports.deletePost = (0, asyncWrapper_middleware_1.default)((req, res) => __awai
     });
 }));
 exports.getPostLikes = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let users = likeServices.getPostLikes(req.post);
-    let numberOfLikes = likeServices.getNumberOfLikes(req.post);
+    const users = likeServices.getPostLikes(req.post);
+    const numberOfLikes = likeServices.getNumberOfLikes(req.post);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
         data: {
@@ -116,25 +115,23 @@ exports.getPostLikes = (0, asyncWrapper_middleware_1.default)((req, res) => __aw
     });
 }));
 exports.likePost = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let userId = req.currentUser.id;
-    let isLiked = likeServices.isLiked(req.post, userId);
+    const userId = req.currentUser.id;
+    const isLiked = likeServices.isLiked(req.post, userId);
     if (isLiked)
         throw new api_error_1.default('This user liked the post before', 409, 'likePost middleware in post controller file', { id: req.params.postId });
-    let tryLike = yield likeServices.likePost(userId, req.post);
-    if (!tryLike)
-        throw new Error('Failed');
+    yield likeServices.likePost(userId, req.post);
     res.status(200).json({ status: httpStatusText_1.SUCCESS });
 }));
 exports.removeLike = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let userId = req.currentUser.id;
-    let isLiked = likeServices.isLiked(req.post, userId);
+    const userId = req.currentUser.id;
+    const isLiked = likeServices.isLiked(req.post, userId);
     if (!isLiked)
         throw new api_error_1.default('This user is already not like the post before', 409, 'removeLike middleware in post controller file', { id: req.params.postId });
     yield likeServices.removeLike(userId, req.post);
     res.status(200).json({ status: httpStatusText_1.SUCCESS });
 }));
 exports.getPostComments = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let comments = yield commentService.getPostComments(req.post);
+    const comments = yield commentService.getPostComments(req.post);
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
         data: comments.map((comment, index) => ({
@@ -168,7 +165,7 @@ exports.addPostComment = (0, asyncWrapper_middleware_1.default)((req, res) => __
 }));
 exports.editPostComment = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    let commentId = new mongoose_1.Types.ObjectId(req.params.commentId);
+    const commentId = new mongoose_1.Types.ObjectId(req.params.commentId);
     const commentAfterEdit = yield commentService.editPostComment({
         userId: req.currentUser.id,
         content: {
@@ -180,7 +177,7 @@ exports.editPostComment = (0, asyncWrapper_middleware_1.default)((req, res) => _
     res.status(200).json({ satus: httpStatusText_1.SUCCESS, data: { commentAfterEdit } });
 }));
 exports.deletePostComment = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let commentId = new mongoose_1.Types.ObjectId(req.params.commentId);
+    const commentId = new mongoose_1.Types.ObjectId(req.params.commentId);
     yield commentService.deletePostComment(commentId);
     res.status(200).json({ satus: httpStatusText_1.SUCCESS, data: null });
 }));
@@ -197,7 +194,7 @@ exports.getCommentReplies = (0, asyncWrapper_middleware_1.default)((req, res) =>
 exports.addCommentReply = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const postId = new mongoose_1.Types.ObjectId(req.params.postId);
-    let newReply = yield replyService.addCommentReply(req.comment, {
+    const newReply = yield replyService.addCommentReply(req.comment, {
         userId: req.currentUser.id,
         postId: postId,
         content: {

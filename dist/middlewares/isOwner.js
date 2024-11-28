@@ -43,21 +43,17 @@ const asyncWrapper_middleware_1 = __importDefault(require("./asyncWrapper.middle
 const mongoose_1 = require("mongoose");
 exports.isPostOwner = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const post = yield postServices.getPost(new mongoose_1.Types.ObjectId(req.params.postId));
-    if (!post) {
+    if (!post)
         throw new api_error_1.default('this id has no available posts', 404);
-    }
-    if (post.userId != req.currentUser.id) {
+    if (post.userId != req.currentUser.id)
         throw new api_error_1.default('You dont have permission, You are not the post\'s owner', 401);
-    }
     next();
 }));
 exports.isCommentOwner = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const comment = yield commentService.getCommentById(new mongoose_1.Types.ObjectId(req.params.commentId));
-    if (!comment) {
-        throw new api_error_1.default('this id has no available posts', 404);
-    }
-    if (comment.userId != req.currentUser.id) {
-        throw new api_error_1.default('You dont have permission, You are not the post\'s owner', 401);
-    }
+    if (!comment)
+        throw new api_error_1.default('this id has no available comments', 404);
+    if (comment.userId != req.currentUser.id)
+        throw new api_error_1.default('You dont have permission, You are not the comment\'s owner', 401);
     next();
 }));

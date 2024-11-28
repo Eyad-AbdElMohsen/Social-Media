@@ -64,6 +64,7 @@ postSchema.pre('save', function (next) {
     }
     next();
 });
+// deleting all comments and share that refer to the post which is deleted
 postSchema.pre(['deleteOne', 'deleteMany'], function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         const postId = this.getQuery()['_id'];
@@ -73,6 +74,7 @@ postSchema.pre(['deleteOne', 'deleteMany'], function (next) {
         if (post.shareIds.length != 0) {
             yield mongoose_1.default.model('Post').deleteMany({ _id: { $in: post.shareIds } });
         }
+        // delete the shareId of the deleted post from the parent post
         yield mongoose_1.default.model('Post').updateOne({ shareIds: post._id }, { $pull: { shareIds: post._id } });
         next();
     });

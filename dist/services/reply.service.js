@@ -21,7 +21,6 @@ const getCommentReplies = (comment) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.getCommentReplies = getCommentReplies;
 const addCommentReply = (comment, data) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     const newReply = new comment_model_1.Comment({
         userId: data.userId,
         postId: data.postId,
@@ -34,7 +33,7 @@ const addCommentReply = (comment, data) => __awaiter(void 0, void 0, void 0, fun
     session.startTransaction();
     const option = { session };
     yield newReply.save(option);
-    (_a = comment.replyIds) === null || _a === void 0 ? void 0 : _a.push(newReply._id);
+    comment.replyIds.push(newReply._id);
     yield comment.save(option);
     session.commitTransaction();
     return newReply;

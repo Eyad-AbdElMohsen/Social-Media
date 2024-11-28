@@ -19,15 +19,14 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const generateJWT_1 = require("../utils/generateJWT");
 dotenv_1.default.config();
+// this middleware extracts a token from the ( Authorization header ), verifies it, and attaches the user to ( req.currentUser )
 exports.verifyToken = (0, asyncWrapper_middleware_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeader = req.headers.authorization;
-    if (!authHeader) {
+    if (!authHeader)
         throw new api_error_1.default('token is required', 401, 'verifyToken.file');
-    }
     const token = authHeader.split(' ')[1];
-    if (!generateJWT_1.secretKey) {
+    if (!generateJWT_1.secretKey)
         throw new api_error_1.default('internal server error', 500);
-    }
     const user = jsonwebtoken_1.default.verify(token, generateJWT_1.secretKey);
     req.currentUser = user;
     next();

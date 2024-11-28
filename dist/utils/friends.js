@@ -20,8 +20,8 @@ const addToRequestList = (sender, recipient) => {
 };
 exports.addToRequestList = addToRequestList;
 const removeFromRequestList = (sender, recipient) => {
-    let sentIndex = sender.sentRequestsList.indexOf(recipient._id);
-    let receiveIndex = recipient.receivedRequestsList.indexOf(sender._id);
+    const sentIndex = sender.sentRequestsList.indexOf(recipient._id);
+    const receiveIndex = recipient.receivedRequestsList.indexOf(sender._id);
     sender.sentRequestsList.splice(sentIndex, 1);
     recipient.receivedRequestsList.splice(receiveIndex, 1);
 };
@@ -32,12 +32,13 @@ const addToFriendsList = (sender, recipient) => {
 };
 exports.addToFriendsList = addToFriendsList;
 const removeFromFriendList = (sender, recipient) => {
-    let sentIndex = sender.friendIds.indexOf(recipient._id);
-    let receiveIndex = recipient.friendIds.indexOf(sender._id);
+    const sentIndex = sender.friendIds.indexOf(recipient._id);
+    const receiveIndex = recipient.friendIds.indexOf(sender._id);
     sender.friendIds.splice(sentIndex, 1);
     recipient.friendIds.splice(receiveIndex, 1);
 };
 exports.removeFromFriendList = removeFromFriendList;
+// Handles saving sender and recipient data in a transactional manner to ensure ( atomicity )
 const savingData = (sender, recipient) => __awaiter(void 0, void 0, void 0, function* () {
     const session = yield mongoose_1.default.startSession();
     session.startTransaction();

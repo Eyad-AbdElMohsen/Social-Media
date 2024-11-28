@@ -91,11 +91,10 @@ exports.getAllUsers = (0, asyncWrapper_middleware_1.default)((req, res) => __awa
         })),
     });
 }));
-const ObjectId = mongoose_1.Types.ObjectId;
 exports.getUserPosts = (0, asyncWrapper_middleware_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const limit = Number(req.query.limit);
     const skip = Number(req.query.skip);
-    const posts = yield postServices.getUserPosts(limit, skip, new ObjectId(req.params.userId));
+    const posts = yield postServices.getUserPosts(limit, skip, new mongoose_1.Types.ObjectId(req.params.userId));
     res.status(200).json({
         status: httpStatusText_1.SUCCESS,
         data: posts.map((post, index) => ({

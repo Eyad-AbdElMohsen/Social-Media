@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.addPostShare = exports.getPostShares = void 0;
 const api_error_1 = __importDefault(require("../errors/api.error"));
 const post_model_1 = require("../models/post.model");
+const mongoose_1 = __importDefault(require("mongoose"));
 const getPostShares = (post) => __awaiter(void 0, void 0, void 0, function* () {
     const shares = yield post.populate('shareIds', { '__v': false });
     return shares.shareIds;
@@ -33,9 +34,13 @@ const addPostShare = (post, data) => __awaiter(void 0, void 0, void 0, function*
         originalPost: data.originalPost,
     });
     yield newShare.populate('userId', '_id email role');
-    yield newShare.save();
+    const session = yield mongoose_1.default.startSession();
+    session.startTransaction();
+    const option = { session };
+    yield newShare.save(option);
     post.shareIds.push(newShare._id);
-    yield post.save();
+    yield post.save(option);
+    session.commitTransaction();
     return newShare;
 });
 exports.addPostShare = addPostShare;

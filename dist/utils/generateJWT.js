@@ -19,7 +19,7 @@ const generateJWT = (payload) => __awaiter(void 0, void 0, void 0, function* () 
     if (exports.secretKey) {
         const token = jsonwebtoken_1.default.sign(payload, 
         // in terminal -> require('crypto').randomBytes(32).toString('hex') 
-        exports.secretKey, { expiresIn: '1h' });
+        exports.secretKey, { expiresIn: '5h' });
         return token;
     }
     else {
